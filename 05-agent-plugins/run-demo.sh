@@ -54,4 +54,4 @@ cd "$HERE"
 echo; echo "Commit message:"; git -C demo-repo log -1 --format=%B
 echo "Notes file (in PLUGIN_DATA): $DATA/notes.md"
 [ -f "$DATA/notes.md" ] && cat "$DATA/notes.md" | tee notes-after-run.txt
-echo; echo "Done. Logs saved - tell Claude 'done'."
+echo; echo "Done. Logs saved."

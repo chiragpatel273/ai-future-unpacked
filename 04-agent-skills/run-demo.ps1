@@ -52,4 +52,4 @@ try {
 }
 Write-Host "`nWithout skills:" -ForegroundColor Yellow; $msg1
 Write-Host "`nWith skills:" -ForegroundColor Green; $msg2
-Write-Host "`nDone. Logs saved - tell Claude 'done'." -ForegroundColor Green
+Write-Host "`nDone. Logs saved." -ForegroundColor Green

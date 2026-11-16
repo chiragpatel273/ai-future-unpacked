@@ -51,4 +51,4 @@ try {
 Write-Host "`nCommit message:" -ForegroundColor Green; $msg
 Write-Host "`nNotes file (in PLUGIN_DATA): $data\notes.md" -ForegroundColor Green
 if (Test-Path "$data\notes.md") { Get-Content "$data\notes.md" | Tee-Object -FilePath notes-after-run.txt }
-Write-Host "`nDone. Logs saved - tell Claude 'done'." -ForegroundColor Green
+Write-Host "`nDone. Logs saved." -ForegroundColor Green
