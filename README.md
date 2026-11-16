@@ -12,6 +12,7 @@ video, small enough to read in a few minutes.
 | 4 | [Agent Skills Explained: How One Text File Teaches Your AI Agent](https://youtu.be/2A747iHL86U) | [`04-agent-skills/`](04-agent-skills/): skills support for the agent, plus a commit-message skill |
 | 5 | [Agent Plugins Explained: Skills + MCP in One Folder](https://youtu.be/9woCB9uvZ-Y) | [`05-agent-plugins/`](05-agent-plugins/): a plugin with a skill and an MCP server, and the agent that loads it |
 | 6 | [Agent Hooks Explained: The Rule Your AI Agent Can't Skip](https://youtu.be/topUF49GeWs) | [`06-agent-hooks/`](06-agent-hooks/): hooks for the agent: block secrets, log every action, and run the tests before "done" |
+| 7 | [Subagents Explained: How AI Agents Use Helpers (and Keep Context Clean)](https://youtu.be/h8boPshOjO8) | [`07-subagents/`](07-subagents/): a `delegate` tool and an explorer subagent, plus a demo shop with three bugs to investigate |
 
 The folders build on each other: each video takes the agent from the one before and adds one idea.
 You can still run any folder on its own.

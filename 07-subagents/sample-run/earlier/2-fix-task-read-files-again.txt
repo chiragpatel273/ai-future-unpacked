@@ -1,0 +1,160 @@
+﻿subagent  explorer: Searches and reads the codebase to answer a question. Use it before reading files yourself.
+
+[main turn 1] context: 471 tokens
+  search {"folder": ".", "pattern": "SAVE10"}
+    -> 418 characters back
+
+[main turn 2] bad tool call, asking the model to try again
+
+[main turn 3] context: 689 tokens
+  search {"folder": ".", "pattern": "SAVE10"}
+    -> 418 characters back
+
+[main turn 4] context: 861 tokens
+  delegate {"agent": "explorer", "task": "Search and read the code for discount calculation, especially handling of coupons and sale items. Find functions like d
+
+        [explorer turn 1] context: 296 tokens
+          search {"folder": ".", "pattern": "discount"}
+            -> 1,672 characters back
+
+        [explorer turn 2] context: 801 tokens
+          read_file {"path": "shop/rules.py"}
+            -> 632 characters back
+
+        [explorer turn 3] context: 992 tokens
+          search {"folder": ".", "pattern": "apply_coupon"}
+            -> 52 characters back
+
+        [explorer turn 4] context: 1,036 tokens
+          read_file {"path": "shop/cart.py"}
+            -> 1,544 characters back
+
+        [explorer turn 5] context: 1,440 tokens
+          read_file {"path": "shop/pricing.py"}
+            -> 1,641 characters back
+
+        [explorer turn 6] context: 1,884 tokens
+          read_file {"line_end": 200, "line_start": 1, "path": "shop/rules.py"}
+            -> 64 characters back
+
+        [explorer turn 7] context: 1,936 tokens
+          read_file {"line_end": 200, "line_start": 1, "path": "shop/rules.py"}
+            -> 64 characters back
+
+        [explorer turn 8] context: 1,988 tokens
+          read_file {"path": "shop/cart.py"}
+            -> 1,544 characters back
+
+        [explorer turn 9] context: 2,392 tokens
+          read_file {"line_end": 200, "line_start": 1, "path": "shop/rules.py"}
+            -> 64 characters back
+
+        [explorer turn 10] context: 2,444 tokens
+          read_file {"path": "shop/rules.py"}
+            -> 632 characters back
+
+        [explorer turn 11] context: 2,635 tokens
+          read_file {"line_end": 200, "line_start": 1, "path": "shop/rules.py"}
+            -> 64 characters back
+
+        [explorer turn 12] context: 2,687 tokens
+        [explorer] done
+
+        **Answer:**  
+        Coupons are applied in `price_breakdown` (shop/pricing.py) which calls `discount_for`. The discount rules are defined in `shop/rules.py`:  
+        
+        * `percent_off` (line 1‑7) returns 0 when any cart item has `on_sale=True`, preventing coupons from stacking on sale items.  
+        * `amount_off` (line 9‑12) caps a fixed‑amount discount at the cart’s total value.  
+        * `discount_for` (line 16) selects the appropriate rule (`percent_off` or `amount_off`) based on the coupon’s “rule” field.  
+        
+        The coupon code is simply stored by `Cart.apply_coupon` (shop/cart.py, line 33).  
+        
+        **Key file/function/line:** `shop/rules.py` – `discount_for` (line 16) and the `percent_off` rule (line 3) that checks `i.on_sale`.
+    -> 708 characters back
+
+[main turn 5] context: 1,120 tokens
+  read_file {"path": "shop/rules.py"}
+    -> 632 characters back
+
+[main turn 6] context: 1,311 tokens
+  read_file {"path": "tests/test_pricing.py"}
+    -> 1,584 characters back
+
+[main turn 7] context: 1,783 tokens
+  read_file {"path": "shop/cart.py"}
+    -> 1,544 characters back
+
+[main turn 8] context: 2,187 tokens
+  read_file {"path": "shop/pricing.py"}
+    -> 1,641 characters back
+
+[main turn 9] context: 2,631 tokens
+  edit_file {"new": "def percent_off(value, items):\n    \"\"\"Take value% off the cart, but only on items that are not already on sale.\n    Sale items are exclu
+    -> 21 characters back
+
+[main turn 10] context: 2,868 tokens
+  search {"folder": ".", "pattern": "on_sale"}
+    -> 2,264 characters back
+
+[main turn 11] context: 3,669 tokens
+  edit_file {"new": "    def test_percent_off_with_sale_item(self):\n        items = [\n            Item(\"A\", \"Lamp\", 40.0, 1),\n            Item(\"B\", \"Wat
+    -> 50 characters back
+
+[main turn 12] context: 3,801 tokens
+  read_file {"path": "tests/test_pricing.py"}
+    -> 1,584 characters back
+
+[main turn 13] context: 4,273 tokens
+  edit_file {"new": "    def test_percent_off(self):\n        items = [Item(\"A\", \"Lamp\", 40.0, 1)]\n        self.assertEqual(discount_for(find_coupon(\"SAVE10
+    -> 29 characters back
+
+[main turn 14] context: 4,525 tokens
+  run_command {"command": "pytest -q"}
+
+  Run `pytest -q`? [y/N]     -> 95 characters back
+
+[main turn 15] context: 4,572 tokens
+  run_command {"command": "python -m pytest -q"}
+
+  Run `python -m pytest -q`? [y/N]     -> 99 characters back
+
+[main turn 16] context: 4,617 tokens
+[main] done
+
+Implemented proper discount handling for coupons with sale items:
+
+- Updated `percent_off` in `shop/rules.py` to calculate discount only on non‑sale items, preserving existing discounts on sale items.
+- Added comprehensive docstring and logic to handle cases with no eligible items.
+- Extended test suite in `tests/test_pricing.py` with a new test `test_percent_off_with_sale_item` to verify correct discount calculation when the cart contains both sale and non‑sale items.
+
+All tests now pass (`10 passed`).
+
+=== tests after the run ===
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.001s
+OK
+
+=== shop/rules.py after the run ===
+def percent_off(value, items):
+    """Take value% off the cart, but only on items that are not already on sale.
+    Sale items are excluded from the discount calculation.
+    """
+    # Calculate discount only for non‑sale items.
+    eligible = sum(i.price * i.qty for i in items if not i.on_sale)
+    if eligible == 0:
+        return 0.0
+    return round(eligible * value / 100, 2)
+
+
+def amount_off(value, items):
+    """Take a fixed amount off, but never more than the cart is worth."""
+    total = sum(i.price * i.qty for i in items)
+    return min(value, total)
+
+
+RULES = {"percent_off": percent_off, "amount_off": amount_off}
+
+
+def discount_for(coupon, items):
+    return RULES[coupon["rule"]](coupon["value"], items)

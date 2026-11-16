@@ -1,0 +1,126 @@
+﻿subagent  explorer: Searches and reads the codebase to answer a question. Use it before reading files yourself.
+
+[main turn 1] context: 958 tokens
+  delegate {"agent": "explorer", "task": "Bug hunt, read-only. Problem: a coupon named \"SAVE10\" (10% off) gives NO discount at all when the cart contains a sal
+  delegate {"agent": "explorer", "task": "Bug hunt, read-only. Problem: a US order of EXACTLY 50.00 dollars still pays shipping, but the policy promises FREE shi
+  delegate {"agent": "explorer", "task": "Bug hunt, read-only. Problem: the order confirmation email for 3 mugs shows \"12.00\" on the mug line, but 3 mugs cost 
+
+        [explorer turn 1] context: 668 tokens
+          list_files {"folder": "."}
+          search {"folder": ".", "pattern": "free|shipping|50"}
+            -> 247 characters back
+            -> 1,510 characters back
+
+        [explorer turn 1] context: 659 tokens
+          list_files {"folder": "."}
+            -> 247 characters back
+
+        [explorer turn 2] context: 791 tokens
+          read_file {"path": "./shop/coupons.py"}
+          read_file {"path": "./shop/pricing.py"}
+            -> 2,065 characters back
+            -> 1,641 characters back
+
+        [explorer turn 3] context: 1,977 tokens
+          read_file {"path": "./shop/rules.py"}
+          read_file {"path": "./shop/cart.py"}
+            -> 632 characters back
+            -> 1,544 characters back
+
+        [explorer turn 2] context: 1,361 tokens
+          read_file {"path": "shop/shipping.py"}
+            -> 859 characters back
+
+        [explorer turn 3] context: 1,736 tokens
+        [explorer] done
+
+        - File: `shop/shipping.py`
+        - Function: `shipping_cost`
+        - Line 14 (offending quote): `if free_over is not None and amount > free_over:`
+        - Explanation: The check uses a strict `>` instead of `>=`, so a subtotal of exactly 50.00 fails the condition (50.00 > 50 is False) and the shipping rate is not set to 0, causing the US order to still pay shipping despite the "free from $50" policy.
+
+        [explorer turn 1] context: 686 tokens
+          list_files {"folder": "."}
+          search {"folder": ".", "pattern": "email"}
+            -> 247 characters back
+            -> 718 characters back
+
+        [explorer turn 2] context: 1,083 tokens
+          read_file {"path": "shop/emails.py"}
+            -> 550 characters back
+
+        [explorer turn 3] context: 1,296 tokens
+          read_file {"path": "shop/orders.py"}
+            -> 944 characters back
+
+        [explorer turn 4] context: 1,569 tokens
+          read_file {"path": "shop/cart.py"}
+            -> 1,544 characters back
+
+        [explorer turn 5] context: 2,024 tokens
+        [explorer] done
+
+        Confirmed. The bug is in the email line rendering.
+        
+        **File:** `shop/emails.py`
+        **Function:** `order_confirmation(order)`
+        **Line 15 (verbatim):**
+        ```python
+            lines = "\n".join(f"  {i.qty} x {i.name}  ${i.price:.2f}" for i in order.items)
+        ```
+        
+        **Why 3 mugs show 12.00 instead of 36.00:** The format string prints `i.price` (the per-unit price) for each line rather than the line total. `Item` defines `price` as the per-unit price (cart.py) and provides `line_total()` = `price * qty`; the email should use `i.line_total()` so 3 mugs × 12.00 = 36.00.
+
+        [explorer turn 4] context: 2,645 tokens
+        [explorer] done
+
+        Found the bug.
+        
+        **File:** `shop/rules.py`
+        **Function:** `percent_off(value, items)`
+        **Line 4:**
+        ```python
+            if any(i.on_sale for i in items):
+        ```
+        
+        **Explanation:** Because `percent_off` returns `0.0` whenever *any* item in the cart has `on_sale=True` (coupons don't stack on sale items), the entire coupon is voided — even for non-sale items — so "SAVE10" gives no discount at all when a sale item is present. (Note `amount_off` has no such check, so only percent-based coupons like SAVE10 are affected.)
+    -> 506 characters back
+    -> 385 characters back
+    -> 550 characters back
+
+[main turn 2] context: 2,033 tokens
+  read_file {"path": "shop/rules.py"}
+  read_file {"path": "shop/shipping.py"}
+  read_file {"path": "shop/emails.py"}
+    -> 632 characters back
+    -> 859 characters back
+    -> 550 characters back
+
+[main turn 3] context: 2,830 tokens
+[main] done
+
+All three findings are verified against the actual code.
+
+# Bug Report
+
+**1) Coupon SAVE10 gives no discount when a sale item is in the cart**
+- File: `shop/rules.py`
+- Function: `percent_off`
+- Line 4: `if any(i.on_sale for i in items):` (followed by `return 0.0`)
+- Cause: The percent rule bails out and returns 0 whenever *any* item in the cart is on sale, voiding the entire coupon instead of just excluding the sale item from the discount. Flat-amount coupons (`amount_off`) aren't affected, which is why it's specific to a percent coupon like SAVE10.
+
+**2) US order of exactly $50.00 still pays shipping**
+- File: `shop/shipping.py`
+- Function: `shipping_cost`
+- Line 14: `if free_over is not None and amount > free_over:`
+- Cause: Strict `>` instead of `>=`. `50.00 > 50` is False, so the rate isn't set to free; "free from $50" should include exactly $50.
+
+**3) Order email for 3 mugs shows 12.00 instead of 36.00**
+- File: `shop/emails.py`
+- Function: `order_confirmation`
+- Line 15: `lines = "\n".join(f"  {i.qty} x {i.name}  ${i.price:.2f}" for i in order.items)`
+- Cause: The line prints the per-unit `i.price` (12.00) rather than the line total; it should use the quantity-multiplied total (3 × 12.00 = 36.00).
+
+No code was changed. Let me know if you'd like me to apply fixes.
+
+Tokens used by all agents together: 24,252

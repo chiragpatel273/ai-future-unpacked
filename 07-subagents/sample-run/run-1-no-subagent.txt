@@ -1,0 +1,104 @@
+﻿
+[main turn 1] context: 791 tokens
+  list_files {"folder": "."}
+  search {"folder": ".", "pattern": "SAVE10"}
+    -> 247 characters back
+    -> 418 characters back
+
+[main turn 2] context: 1,147 tokens
+  read_file {"path": "."}
+    -> 40 characters back
+
+[main turn 3] bad tool call, asking the model to try again
+
+[main turn 4] context: 1,248 tokens
+  read_file {"path": "shop\\coupons.py"}
+  read_file {"path": "shop\\pricing.py"}
+    -> 2,065 characters back
+    -> 1,641 characters back
+
+[main turn 5] context: 2,432 tokens
+  read_file {"path": "shop\\rules.py"}
+  read_file {"path": "shop\\shipping.py"}
+    -> 632 characters back
+    -> 859 characters back
+
+[main turn 6] context: 3,019 tokens
+  read_file {"path": "shop\\emails.py"}
+  read_file {"path": "shop\\cart.py"}
+    -> 550 characters back
+    -> 1,544 characters back
+
+[main turn 7] context: 3,693 tokens
+  read_file {"path": "shop\\orders.py"}
+  read_file {"path": "shop\\products.py"}
+    -> 944 characters back
+    -> 1,642 characters back
+
+[main turn 8] bad tool call, asking the model to try again
+
+[main turn 9] context: 4,723 tokens
+  search {"folder": ".", "pattern": "mug|12\\.0|36"}
+    -> 182 characters back
+
+[main turn 10] context: 4,956 tokens
+  read_file {"path": "tests\\test_pricing.py"}
+  read_file {"path": "shop\\tax.py"}
+    -> 1,584 characters back
+    -> 433 characters back
+
+[main turn 11] context: 5,668 tokens
+  run_command {"command": "python -c \"from shop.coupons import find_coupon; from shop.rules import discount_for; from shop.cart import Item; print(discount_for(fin
+
+  Run `python -c "from shop.coupons import find_coupon; from shop.rules import discount_for; from shop.cart import Item; print(discount_for(find_coupon('SAVE10'), [Item('A','Mug',5.99,3), Item('B','Bottle',11.99,1, on_sale=True))))" && python -c "from shop.pricing import price_breakdown; from shop.cart import Cart, Item; b=price_breakdown(Cart([Item('A','Mug',10.0,5)], 'SAVE10')); print(b)" 2>&1`? [y/N]   read_file {"path": "docs\\CHANGELOG.md"}
+  search {"folder": ".", "pattern": "order_confirmation|line_total|\\.items"}
+    -> 536 characters back
+    -> 377 characters back
+    -> 1,000 characters back
+
+[main turn 12] bad tool call, asking the model to try again
+
+[main turn 13] context: 6,521 tokens
+  run_command {"command": "python -c \"from shop.coupons import find_coupon; from shop.rules import discount_for; from shop.cart import Item; print(discount_for(fin
+
+  Run `python -c "from shop.coupons import find_coupon; from shop.rules import discount_for; from shop.cart import Item; print(discount_for(find_coupon('SAVE10'), [Item('A','Mug',5.99,3), Item('B','Bottle',11.99,1, on_sale=True)]))"`? [y/N]     -> 4 characters back
+
+[main turn 14] context: 6,640 tokens
+[main] done
+
+Confirmed: with a sale item in the cart, SAVE10 returns $0.00 discount.
+
+Now I have everything. Note on problem 3: "the email line shows 12.00 but should be 36.00 for 3 mugs" — that matches a $12.00 mug line total (3 × $12 = $36), but the catalog mug is $5.99. Regardless of prices, the bug is identical: `order_confirmation` prints `i.price` (the per-unit price) instead of `i.line_total()` (price × qty) on each order line — which explains "3 mugs" showing one unit's price on the line rather than 3× that price.
+
+Here is my report (one "investigation" per problem):
+
+---
+
+**Bug report**
+
+1. **SAVE10 gives no discount when the cart has a sale item**
+   - File: `shop/rules.py`
+   - Function: `percent_off`
+   - Line: the block at the top of the function:
+     ```python
+     # Sale items are already discounted, so coupons don't stack on them.
+     if any(i.on_sale for i in items):
+         return 0.0
+     ```
+   - Cause: `percent_off` bails out and returns 0.0 for the *entire* cart whenever *any* item is on sale, instead of skipping only the sale items when computing the percentage. So a single sale item (e.g., the $11.99 Water Bottle or $12.50 Phone Case in the catalog) kills the coupon for the whole order.
+
+2. **US order of exactly $50.00 still pays shipping**
+   - File: `shop/shipping.py`
+   - Function: `shipping_cost`
+   - Line: `if free_over is not None and amount > free_over:`
+   - Cause: the comparison is strict `>`. "Free shipping from 50 dollars" means the threshold is inclusive, so a cart of exactly 50.00 should be free, but `50.0 <= 50` falls through and the 4.99 rate is applied.
+
+3. **Order email shows the per-unit price on the mug line, not the line total**
+   - File: `shop/emails.py`
+   - Function: `order_confirmation`
+   - Line: `lines = "\n".join(f"  {i.qty} x {i.name}  ${i.price:.2f}" for i in order.items)`
+   - Cause: the format string prints `i.price` (unit price) instead of the line total ($i.quantity × i.price$). `Item` already has a `line_total()` helper (`shop/cart.py`) that `Cart.subtotal()` uses — the email just didn't. As written, "3 × Coffee Mug" displays one mug's price rather than 3 × that price.
+
+No code was changed.
+
+Tokens used by all agents together: 42,380
