@@ -4,7 +4,7 @@
 commit-message skill (video 4) and the notes MCP server (video 3). `plugin_agent.py` is our agent, now able
 to load a plugin folder: it checks `plugin.json`, finds the skills, starts the MCP servers, and skips
 anything broken instead of crashing.
-Video: Agent Plugins Explained: Skills + MCP in One Folder *(link added on release)*
+Video: [Agent Plugins Explained: Skills + MCP in One Folder](https://youtu.be/9woCB9uvZ-Y)
 
 ## Run it
 The demo builds a small git repo with one staged change (and no skills in it), then runs two tasks
