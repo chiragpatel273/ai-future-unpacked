@@ -1,0 +1,6 @@
+.venv/
+demo-repo/
+__pycache__/
+/run-*.txt
+/tool-log.txt
+demo/.agent/tool-log.txt

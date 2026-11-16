@@ -1,0 +1,7 @@
+17:18:21  run_command  {"command": "ls -R"}
+17:18:23  run_command  {"command": "dir"}
+17:18:25  edit_file  {"new": "def cart_total(items, discount=0.0):\n    if discount < 0 or discount > 0.5:\n        raise ValueError(\"discou
+17:19:03  run_command  {"command": "python - <<PY\nimport test_cart, sys, traceback, json, importlib\ntry:\n    import cart\n    print('cart im
+17:19:06  run_command  {"command": "python -m unittest test_cart.py"}
+17:19:07  edit_file  {"new": "    if discount < 0:\n        raise ValueError(\"discount must be between 0 and 0.5\")\n    if discount > 0.5:\
+17:19:11  run_command  {"command": "python -m unittest test_cart.py"}

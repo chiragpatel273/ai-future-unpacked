@@ -1,0 +1,92 @@
+﻿hook  PreToolUse   read_file|run_command  python .agent/hooks/guard.py
+hook  PostToolUse  edit_file|run_command  python .agent/hooks/log.py
+hook  Stop         *                      python .agent/hooks/tests_pass.py
+
+[turn 1] run_command {'command': 'ls -R'}
+
+  Run `ls -R`? [y/N]     'ls' is not recognized as an internal or external command,
+operable program or batch file.
+
+[turn 2] run_command {'command': 'dir'}
+
+  Run `dir`? [y/N]     Volume in drive C has no label.
+ Volume Serial Number is 7AC3-B8D9
+
+ Directory of C:\Users\DELL\Videos\YouTube\01-long-videos\ep06-agent-hooks\code\demo-repo
+
+16-11-2026  17:17    <DIR>          .
+16-11-2026  17:17    <DIR>          ..
+16-11-2026  17:17    <DIR>          .agent
+16-11-2026  17:17    
+
+[turn 3] read_file {'path': 'cart.py'}
+    def cart_total(items, discount=0.0):
+    """Total of (price, qty) items after a discount.
+
+    discount is a fraction: 0.10 means 10% off. It must be between 0 and 1,
+    otherwise raise ValueError.
+    """
+    subtotal = sum(price * qty for price, qty in items)
+    return round(subtotal * (1 - disc
+
+[turn 4] edit_file {'new': 'def cart_total(items, discount=0.0):\n    if discount < 0 or discount > 0.5:\n        raise ValueError("discount must be between 0 and 0.5")', 'old': 'def cart_total(items, discount=0.0):', 'path': 'cart.py'}
+    Edited cart.py.
+
+[turn 5] run_command {'command': "python - <<PY\nimport test_cart, sys, traceback, json, importlib\ntry:\n    import cart\n    print('cart imported')\nexcept Exception as e:\n    traceback.print_exc()\nPY"}
+
+  Run `python - <<PY
+import test_cart, sys, traceback, json, importlib
+try:
+    import cart
+    print('cart imported')
+except Exception as e:
+    traceback.print_exc()
+PY`? [y/N]     << was unexpected at this time.
+
+[turn 6] run_command {'command': 'python -m unittest test_cart.py'}
+
+  Run `python -m unittest test_cart.py`? [y/N]     E...
+======================================================================
+ERROR: test_discount_capped_at_50_percent (test_cart.CartTest.test_discount_capped_at_50_percent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\DEL
+
+[turn 7] edit_file {'new': '    if discount < 0:\n        raise ValueError("discount must be between 0 and 0.5")\n    if discount > 0.5:\n        discount = 0.5', 'old': '    if discount < 0 or discount > 0.5:\n        raise ValueError("discount must be between 0 and 0.5")', 'path': 'cart.py'}
+    Edited cart.py.
+
+[turn 8] run_command {'command': 'python -m unittest test_cart.py'}
+
+  Run `python -m unittest test_cart.py`? [y/N]     ....
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK
+
+[turn 9] done
+
+Implemented discount cap in **cart.py**:
+- Added validation for negative discounts.
+- Capped discounts above 50% to 0.5 instead of raising an error.
+- Updated logic accordingly.
+
+All tests now pass.
+
+=== tests after the run ===
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+OK
+
+=== cart.py after the run ===
+def cart_total(items, discount=0.0):
+    if discount < 0:
+        raise ValueError("discount must be between 0 and 0.5")
+    if discount > 0.5:
+        discount = 0.5
+    """Total of (price, qty) items after a discount.
+
+    discount is a fraction: 0.10 means 10% off. It must be between 0 and 1,
+    otherwise raise ValueError.
+    """
+    subtotal = sum(price * qty for price, qty in items)
+    return round(subtotal * (1 - discount), 2)

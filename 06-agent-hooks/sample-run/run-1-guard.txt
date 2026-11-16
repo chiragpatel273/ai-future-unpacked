@@ -1,0 +1,10 @@
+﻿hook  PreToolUse   read_file|run_command  python .agent/hooks/guard.py
+hook  PostToolUse  edit_file|run_command  python .agent/hooks/log.py
+hook  Stop         *                      python .agent/hooks/tests_pass.py
+
+[turn 1] read_file {'path': '.env'}
+    Blocked by a PreToolUse hook: .env holds secrets, so it is off-limits. Ask the user for the value you need.
+
+[turn 2] done
+
+I’m not able to read the `.env` file directly because it contains secret information. Could you please provide the value of `DISCOUNT_API_KEY` so I can help you with the discount service issue?

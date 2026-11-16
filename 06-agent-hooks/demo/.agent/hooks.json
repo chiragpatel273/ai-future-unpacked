@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "read_file|run_command",
+        "command": "python", "args": [".agent/hooks/guard.py"] }
+    ],
+    "PostToolUse": [
+      { "matcher": "edit_file|run_command",
+        "command": "python", "args": [".agent/hooks/log.py"] }
+    ],
+    "Stop": [
+      { "command": "python", "args": [".agent/hooks/tests_pass.py"] }
+    ]
+  }
+}

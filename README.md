@@ -11,6 +11,7 @@ video, small enough to read in a few minutes.
 | 3 | [What is MCP? Build Your Own MCP Server in 34 Lines](https://youtu.be/XG8_rFOPqVY) | [`03-mcp-server/`](03-mcp-server/): a notes MCP server and the agent that uses it |
 | 4 | [Agent Skills Explained: How One Text File Teaches Your AI Agent](https://youtu.be/2A747iHL86U) | [`04-agent-skills/`](04-agent-skills/): skills support for the agent, plus a commit-message skill |
 | 5 | [Agent Plugins Explained: Skills + MCP in One Folder](https://youtu.be/9woCB9uvZ-Y) | [`05-agent-plugins/`](05-agent-plugins/): a plugin with a skill and an MCP server, and the agent that loads it |
+| 6 | [Agent Hooks Explained: The Rule Your AI Agent Can't Skip](https://youtu.be/topUF49GeWs) | [`06-agent-hooks/`](06-agent-hooks/): hooks for the agent: block secrets, log every action, and run the tests before "done" |
 
 The folders build on each other: each video takes the agent from the one before and adds one idea.
 You can still run any folder on its own.
@@ -20,7 +21,7 @@ You can still run any folder on its own.
 ### 1. One-time setup (about 5 minutes)
 - **Python 3.10 or newer** from [python.org](https://www.python.org/downloads/).
   On Windows, tick **"Add python.exe to PATH"** in the installer.
-- **Git** from [git-scm.com](https://git-scm.com/downloads) (the demos in folders 04 and 05 use it).
+- **Git** from [git-scm.com](https://git-scm.com/downloads) (the demos in folders 04, 05 and 06 use it).
 - **A free API key** from [Groq](https://console.groq.com): sign in, open *API Keys*, create one.
   Keep it private: never paste it into a file you commit.
 
