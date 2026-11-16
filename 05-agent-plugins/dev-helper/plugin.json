@@ -1,0 +1,10 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "dev-helper",
+  "version": "1.0.0",
+  "description": "Our team's commit-message rules, plus a notebook the agent can write to.",
+  "author": { "name": "AI Future Unpacked" },
+  "repository": "https://github.com/chiragpatel273/ai-future-unpacked",
+  "license": "MIT",
+  "keywords": ["git", "commits", "notes"]
+}

@@ -1,0 +1,5 @@
+.venv/
+demo-repo/
+__pycache__/
+/run-*.txt
+/notes-after-run.txt

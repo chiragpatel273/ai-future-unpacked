@@ -10,6 +10,7 @@ video, small enough to read in a few minutes.
 | 2 | [Build an AI Coding Agent from Scratch in Python](https://youtu.be/ZXbikEMg_9Q) | [`02-ai-coding-agent/`](02-ai-coding-agent/): the ~100-line agent and the buggy demo it fixes |
 | 3 | [What is MCP? Build Your Own MCP Server in 34 Lines](https://youtu.be/XG8_rFOPqVY) | [`03-mcp-server/`](03-mcp-server/): a notes MCP server and the agent that uses it |
 | 4 | [Agent Skills Explained: How One Text File Teaches Your AI Agent](https://youtu.be/2A747iHL86U) | [`04-agent-skills/`](04-agent-skills/): skills support for the agent, plus a commit-message skill |
+| 5 | Agent Plugins Explained: Skills + MCP in One Folder *(video link added on release)* | [`05-agent-plugins/`](05-agent-plugins/): a plugin with a skill and an MCP server, and the agent that loads it |
 
 ## What you need
 - Python 3.10 or newer

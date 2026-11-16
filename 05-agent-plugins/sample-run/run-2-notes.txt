@@ -1,0 +1,18 @@
+﻿Plugin: dev-helper 1.0.0
+  skill  commit-message
+  server notes (stdio)
+  server notes connected: add_note, search_notes
+
+[turn 1] search_notes {'query': 'PAY-142'}
+    - Committed: feat(cart): cap discount at 50% (Prevent excessive discounts that could lead to negative revenue) Ref: PAY-142
+
+[turn 2] done
+
+You committed a **feature** change:
+
+**Commit message:**  
+`feat(cart): cap discount at 50% (Prevent excessive discounts that could lead to negative revenue)`
+
+**Reference:** PAYΓÇæ142
+
+So the change caps the cart discount at 50% to avoid overly large discounts that could result in negative revenue.

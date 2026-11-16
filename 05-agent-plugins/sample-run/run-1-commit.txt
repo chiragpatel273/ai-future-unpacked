@@ -1,0 +1,56 @@
+﻿Plugin: dev-helper 1.0.0
+  skill  commit-message
+  server notes (stdio)
+  server notes connected: add_note, search_notes
+
+[turn 1] run_command {'command': 'git status --porcelain'}
+
+  Run `git status --porcelain`? [y/N]     M  cart.py
+
+[turn 2] activate_skill {'skill': 'commit-message'}
+    <skill_content name="commit-message">
+# Commit messages: our team's rules
+
+1. See what is staged: `git diff --cached`. If nothing is staged, stop and say so.
+2. Find the ticket ID in the branch name: `git branch --show-current`.
+   Example: `feature/PAY-142-discount-cap` means the ticket is `PAY-142
+
+[turn 3] run_command {'command': 'git branch --show-current'}
+
+  Run `git branch --show-current`? [y/N]     feature/PAY-142-discount-cap
+
+[turn 4] run_command {'command': 'git diff --cached'}
+
+  Run `git diff --cached`? [y/N]     diff --git a/cart.py b/cart.py
+index 807c92a..7f45b58 100644
+--- a/cart.py
++++ b/cart.py
+@@ -1,4 +1,5 @@
+ def cart_total(items, discount=0.0):
+     """Total of (price, qty) items after a discount (0.10 = 10%)."""
++    discount = min(discount, 0.5)  # never more than 50% off
+     subtotal = sum(price
+
+[turn 5] run_command {'command': 'python C:/Users/DELL/Videos/YouTube/01-long-videos/ep05-agent-plugins/code/dev-helper/skills/commit-message/scripts/check_message.py "feat(cart): cap discount at 50%" "Prevent excessive discounts that could lead to negative revenue" "Refs: PAY-142"'}
+
+  Run `python C:/Users/DELL/Videos/YouTube/01-long-videos/ep05-agent-plugins/code/dev-helper/skills/commit-message/scripts/check_message.py "feat(cart): cap discount at 50%" "Prevent excessive discounts that could lead to negative revenue" "Refs: PAY-142"`? [y/N]     OK
+
+[turn 6] run_command {'command': 'git commit -m "feat(cart): cap discount at 50%" -m "Prevent excessive discounts that could lead to negative revenue" -m "Refs: PAY-142"'}
+
+  Run `git commit -m "feat(cart): cap discount at 50%" -m "Prevent excessive discounts that could lead to negative revenue" -m "Refs: PAY-142"`? [y/N]     [feature/PAY-142-discount-cap 47318eb] feat(cart): cap discount at 50%
+ 1 file changed, 1 insertion(+)
+
+[turn 7] add_note {'text': 'Committed: feat(cart): cap discount at 50% (Prevent excessive discounts that could lead to negative revenue) Ref: PAY-142'}
+    Saved.
+
+[turn 8] done
+
+Committed the staged changes with a proper commit message and saved a note summarizing the commit.
+
+=== resulting commit message ===
+feat(cart): cap discount at 50%
+
+Prevent excessive discounts that could lead to negative revenue
+
+Refs: PAY-142
+
