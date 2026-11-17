@@ -1,0 +1,469 @@
+﻿Code Mode: ON   model: qwen/qwen3.8-27b
+
+[turn 1] context: 511 tokens
+  run_code:
+    | def list_files(folder):
+    |     # recursively list files
+    |     import os
+    |     result = []
+    |     for root, dirs, files in os.walk(folder):
+    |         for f in files:
+    |             result.append(os.path.join(root, f))
+    |     return "\n".join(result)
+    | 
+    | print(list_files("."))
+    (0 tool calls ran inside the code)
+    -> 467 characters back
+
+[turn 2] context: 768 tokens
+  run_code:
+    | import os, re
+    | 
+    | pwd = os.getcwd()
+    | md_files = []
+    | for root, dirs, files in os.walk(pwd):
+    |     for f in files:
+    |         if f.lower().endswith(".md"):
+    |             md_files.append(os.path.join(root, f))
+    | 
+    | all_files = set()
+    | for root, dirs, files in os.walk(pwd):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    | 
+    | link_re = re.compile(r'\[([^\]]*)\]\(([^)]*)\)')
+    | missing = []
+    | for md in sorted(md_files):
+    |     try:
+    |         with open(md, encoding="utf-8") as fh:
+    |             text = fh.read()
+    |     except Exception as e:
+    |         print("read error", md, e)
+    |         continue
+    |     rel = os.path.relpath(md, pwd)
+    |     for m in link_re.finditer(text):
+    |         target = m.group(2).strip()
+    |         # skip images in markdown syntax? no, keep. But handle ![alt](src) - group matches too.
+    |         if not target:
+    |             continue
+    |         # skip external
+    |         if re.match(r'^[a-zA-Z][a-zA-Z0-9+.-]*://', target):
+    |             continue
+    |         if target.startswith("mailto:") or target
+    (0 tool calls ran inside the code)
+    -> 620 characters back
+
+[turn 3] context: 1,294 tokens
+  run_code:
+    | import os, re
+    | 
+    | pwd = os.getcwd()
+    | 
+    | all_files = set()
+    | for root, dirs, files in os.walk(pwd):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    | 
+    | md_files = [p for p in all_files if p.lower().endswith(".md")]
+    | 
+    | link_re = re.compile(r'\[([^\]]*)\]\(([^)]*)\)')
+    | missing = []
+    | for md in sorted(md_files):
+    |     with open(md, encoding="utf-8") as fh:
+    |         text = fh.read()
+    |     rel = md.replace('\\', '/')
+    |     for m in link_re.finditer(text):
+    |         target = m.group(2).strip()
+    |         if not target:
+    |             continue
+    |         if re.match(r'^[a-zA-Z][a-zA-Z0-9+.\-]*://', target):
+    |             continue
+    |         if target.startswith("mailto:") or target.startswith("tel:"):
+    |             continue
+    |         # strip anchor
+    |         t = target
+    |         if "#" in t:
+    |             path_part, anchor = t.split("#", 1)
+    |         else:
+    |             path_part, anchor = t, None
+    |         if not path_part:
+    |             # pure anchor link, ignore
+    |             continue
+    |         # urldecode-ish
+    (0 tool calls ran inside the code)
+    -> 26 characters back
+
+[turn 4] context: 1,630 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote, urlsplit
+    | 
+    | pwd = os.getcwd()
+    | 
+    | link_re = re.compile(r'\[([^\]]*)\]\(([^)]*)\)')
+    | missing = []
+    | for md in r"C:\Users\DELL\Videos\YouTube\01-long-videos\ep08-code-mode\code":
+    |     pass
+    (0 tool calls ran inside the code)
+    -> 26 characters back
+
+[turn 5] bad tool call, asking the model to try again
+
+[turn 6] context: 1,798 tokens
+  run_code:
+    | from runpy import run_module
+    (0 tool calls ran inside the code)
+    -> 26 characters back
+
+[turn 7] context: 1,852 tokens
+  run_code:
+    | print("start")
+    (0 tool calls ran inside the code)
+    -> 6 characters back
+
+[turn 8] context: 1,900 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote
+    | 
+    | def walk(folder):
+    |     out = []
+    |     for root, dirs, files in os.walk(folder):
+    |         for f in files:
+    |             out.append(os.path.join(root, f))
+    |     return out
+    | 
+    | top = os.getcwd()
+    | all_paths = walk(top)
+    | 
+    | md_files = [p for p in all_paths if p.lower().endswith(".md")]
+    | print("md files:", len(md_files))
+    | for m in md_files:
+    |     print("  " + m.replace(top, "."))
+    (0 tool calls ran inside the code)
+    -> 452 characters back
+
+[turn 9] bad tool call, asking the model to try again
+
+[turn 10] context: 2,282 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote
+    | 
+    | top = os.getcwd()
+    | 
+    | all_files = set()
+    | md_files = []
+    | for root, dirs, files in os.walk(top):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    |         if f.lower().endswith(".md"):
+    |             md_files.append(p)
+    | 
+    | link_re = re.compile(r'\[([^\]]*)\]\(([^)]*)\)')
+    | missing = []
+    | 
+    | def is_external(t):
+    |     return bool(re.match(r'^[a-zA-Z][a-zA-Z0-9+.\-]*:', t)) and not t.startswith('./') and not t.startswith('../')
+    | 
+    | for md in sorted(md_files):
+    |     with open(md, encoding='utf-8') as fh:
+    |         text = fh.read()
+    |     rel = os.path.relpath(md, top).replace('\\', '/')
+    |     for m in link_re.finditer(text):
+    |         target = m.group(2).strip()
+    |         # remove optional title in quotes
+    |         # handle "text (title)" inside parens via stripping trailing "..." or '...'
+    |         tm = re.match(r'^(\S+)\s+["\'](.*?)["\']$', target)
+    |         if tm:
+    |             target = tm.group(1)
+    |         if not target:
+    |             continue
+    (0 tool calls ran inside the code)
+    -> 26 characters back
+
+[turn 11] context: 2,628 tokens
+  run_code:
+    | print("trying")
+    (0 tool calls ran inside the code)
+    -> 7 characters back
+
+[turn 12] context: 2,676 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote
+    | 
+    | top = os.getcwd()
+    | 
+    | all_files = set()
+    | md_files = []
+    | for root, dirs, files in os.walk(top):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    |         if f.lower().endswith(".md"):
+    |             md_files.append(p)
+    | 
+    | link_re = re.compile(r'\[([^\]]*)\]\(([^)]*)\)')
+    | missing = []
+    | counts = {}
+    | 
+    | def build_missing(target, md, md_rel):
+    |     # target is the path part
+    |     norm_t = os.path.normpath(target)
+    |     if norm_t.startswith('..') or os.path.isabs(norm_t):
+    |         return False
+    |     joined = os.path.normpath(os.path.join(top, norm_t))
+    |     if joined in all_files or os.path.exists(joined):
+    |         return False
+    |     missing.append((md_rel, target))
+    |     return True
+    | 
+    | for md in sorted(md_files):
+    |     with open(md, encoding='utf-8') as fh:
+    |         text = fh.read()
+    |     rel = os.path.relpath(md, top).replace('\\', '/')
+    |     seen = set()
+    |     for m in link_re.finditer(text):
+    |         target = m.group(2).strip()
+    |         t
+    (0 tool calls ran inside the code)
+    -> 555 characters back
+
+[turn 13] context: 3,200 tokens
+  run_code:
+    | print("trying")
+    (0 tool calls ran inside the code)
+    -> 7 characters back
+
+[turn 14] context: 3,248 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote
+    | 
+    | top = os.getcwd()
+    | 
+    | all_files = set()
+    | md_files = []
+    | for root, dirs, files in os.walk(top):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    |         if f.lower().endswith(".md"):
+    |             md_files.append(p)
+    | 
+    | link_re = re.compile(r'\[([^\]]*)\]\(([^)]*)\)')
+    | missing = []
+    | 
+    | def check(target, md, md_rel):
+    |     # target is the resolved path
+    |     if not target:
+    |         return
+    |     norm_t = os.path.normpath(target)
+    |     joined =
+    (0 tool calls ran inside the code)
+    -> 556 characters back
+
+[turn 15] context: 3,627 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote
+    | 
+    | top = os.getcwd()
+    | 
+    | all_files = set()
+    | md_files = []
+    | for root, dirs, files in os.walk(top):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    |         if f.lower().endswith(".md"):
+    |             md_files.append(p)
+    | 
+    | link_re = re.compile(r'\[([^\]]*)\]\(([^)]*)\)')
+    | missing = []
+    | 
+    | for md in sorted(md_files):
+    |     with open(md, enc
+    (0 tool calls ran inside the code)
+    -> 572 characters back
+
+[turn 16] context: 3,984 tokens
+  run_code:
+    | import os
+    | 
+    | lines = """
+    | top = os.getcwd()
+    | count = 0
+    | with open(os.path.join(top, "README.md"), "r", encoding="utf-8") as fh:
+    |     for line in fh:
+    |         if line.strip():
+    |             count += 1
+    | print("nonblank lines in README:", count)
+    | """.splitlines()
+    | src = " ".join(lines)
+    | print("lines joined, length:", len(src))
+    | exec(src)
+    (0 tool calls ran inside the code)
+    -> 822 characters back
+
+[turn 17] context: 4,390 tokens
+  run_code:
+    | import os
+    | 
+    | parts = [
+    |     "import os, re",
+    |     "from urllib.parse import unquote",
+    |     "top = os.getcwd()",
+    |     "all_files = set()",
+    |     "md_files = []",
+    |     "for root, dirs, files in os.walk(top):",
+    |     "    for f in files:",
+    |     "        p = os.path.join(root, f)",
+    |     "        all_files.add(os.path.normpath(p))",
+    |     "        if p.lower().endswith('.md'):",
+    |     "            md_files.append(p)",
+    |     "link_re = re.compile(r'\\[([^\\]]*)\\]\\(([^)]*)\\)')",
+    |     "missing = []",
+    |     "for md in sorted(md_files):",
+    |     "    txt = open(md, encoding='utf-8').read()",
+    |     "    rel = os.path.relpath(md, top).replace('\\\\', '/')",
+    |     "    for m in link_re.finditer(txt):",
+    |     "        tgt = m.group(2).strip()",
+    |     "        mt = re.match(r'^(\\S+)\\s+[\"\'](.*?)[\"\']$', tgt)",
+    |     "        if mt:",
+    |     "            tgt = mt.group(1)",
+    |     "        if not tgt:",
+    |     "            continue",
+    |     "        if re.match(r'^[a-zA-Z][a-zA-Z0-9+.\\-]*:', tgt):",
+    |     "            continue",
+    |     "        tp = un
+    (0 tool calls ran inside the code)
+    -> 591 characters back
+
+[turn 18] context: 4,959 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote
+    | 
+    | top = os.getcwd()
+    | all_files = set()
+    | md_files = []
+    | for root, dirs, files in os.walk(top):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    |         if f.lower().endswith(".md"):
+    |             md_files.append(p)
+    | 
+    | link_re = re.compile(r"\[([^\]]*)\]\(([^)]*)\)")
+    | missing = []
+    | 
+    | for md in sorted(md_files):
+    |     txt = open(md, encoding="utf-8").read()
+    |     rel = os.path.relpath(md, top).replace("\\", "/")
+    |     for m in link_re.findi
+    (0 tool calls ran inside the code)
+    -> 582 characters back
+
+[turn 19] context: 5,350 tokens
+  run_code:
+    | import os, re
+    | print("imports ok")
+    (0 tool calls ran inside the code)
+    -> 11 characters back
+
+[turn 20] bad tool call, asking the model to try again
+
+[turn 21] context: 5,451 tokens
+  run_code:
+    | import os
+    | 
+    | top = os.getcwd
+    (0 tool calls ran inside the code)
+    -> 26 characters back
+
+[turn 22] context: 5,506 tokens
+  run_code:
+    | print("A")
+    | x = 1
+    | print("B", x)
+    | y = 2
+    | print("C", y)
+    (0 tool calls ran inside the code)
+    -> 10 characters back
+
+[turn 23] bad tool call, asking the model to try again
+
+[turn 24] context: 5,632 tokens
+  run_code:
+    | import os
+    | from os import path
+    (0 tool calls ran inside the code)
+    -> 26 characters back
+
+[turn 25] bad tool call, asking the model to try again
+
+[turn 26] context: 5,733 tokens
+  run_code:
+    | print("P1")
+    | a = 1
+    | print("P2", a)
+    (0 tool calls ran inside the code)
+    -> 8 characters back
+
+[turn 27] bad tool call, asking the model to try again
+
+[turn 28] context: 5,847 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote
+    | 
+    | top = os.getcwd()
+    | 
+    | all_files = set()
+    | md_files = []
+    | for root, dirs, files in os.walk(top):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    |         if f.lower().endswith(".md"):
+    |             md_files.append(p)
+    | 
+    | link_re = re.compile(r"\[([^\]]*)\]\(([^)]*)\)")
+    | title_re = re.compile(r"^(
+    (0 tool calls ran inside the code)
+    -> 623 characters back
+
+[turn 29] bad tool call, asking the model to try again
+
+[turn 30] context: 6,252 tokens
+  run_code:
+    | import os, re
+    | from urllib.parse import unquote
+    | 
+    | top = os.getcwd()
+    | 
+    | all_files = set()
+    | md_files = []
+    | for root, dirs, files in os.walk(top):
+    |     for f in files:
+    |         p = os.path.join(root, f)
+    |         all_files.add(os.path.normpath(p))
+    |         if f.lower().endswith(".md"):
+    |             md_files.append(p)
+    | 
+    | missing = []
+    | for md in sorted(md_files):
+    |     txt = open(md, encoding="utf-8").read()
+    |     rel = os.path.relpath(md, top).replace("\\", "/")
+    |     for m in re.finditer(r"\[([^\]]*)\]\(([^)]*)\)", txt):
+    |         tgt = m.group(2).strip()
+    (0 tool calls ran inside the code)
+    -> 26 characters back
+
+Model turns: 23   tool calls: 23 (+0 inside the code)
+Biggest context: 6,252 tokens   Tokens used in total: 83,795

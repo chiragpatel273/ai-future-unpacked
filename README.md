@@ -13,6 +13,7 @@ video, small enough to read in a few minutes.
 | 5 | [Agent Plugins Explained: Skills + MCP in One Folder](https://youtu.be/9woCB9uvZ-Y) | [`05-agent-plugins/`](05-agent-plugins/): a plugin with a skill and an MCP server, and the agent that loads it |
 | 6 | [Agent Hooks Explained: The Rule Your AI Agent Can't Skip](https://youtu.be/topUF49GeWs) | [`06-agent-hooks/`](06-agent-hooks/): hooks for the agent: block secrets, log every action, and run the tests before "done" |
 | 7 | [Subagents Explained: How AI Agents Use Helpers (and Keep Context Clean)](https://youtu.be/h8boPshOjO8) | [`07-subagents/`](07-subagents/): a `delegate` tool and an explorer subagent, plus a demo shop with three bugs to investigate |
+| 8 | [Code Mode Explained: Why AI Agents Write Code Instead of Calling Tools](https://youtu.be/ab-bNKSDD-4) | [`08-code-mode/`](08-code-mode/): a `run_code` tool that lets the model write a script to call the tools, plus demo docs with broken links |
 
 The folders build on each other: each video takes the agent from the one before and adds one idea.
 You can still run any folder on its own.
@@ -75,6 +76,7 @@ Smaller models are often worse at using tools, so results can differ from the vi
 | `error: externally-managed-environment` (Linux/WSL) | `python3 -m venv .venv && source .venv/bin/activate`, then `pip install ...` again. |
 | `401` / `Invalid API Key` | The key is wrong or was revoked. Create a new one at console.groq.com. |
 | `429` / `rate limit` | The free plan has per-minute limits. The code waits and retries; if it still fails, wait a minute. |
+| `413` / `Request too large` | One request is bigger than the free plan's per-minute token limit. Use a model with higher limits, or turn on Code Mode (video 8), which keeps requests small. |
 | `'git' is not recognized` | Install Git, then open a new terminal. |
 | `run-demo.ps1 cannot be loaded ... disabled on this system` | Double-click `run-demo.bat` instead: it runs the script without changing your settings. |
 | `bash: run-demo.sh: /bin/bash^M: bad interpreter` | The file got Windows line endings. Run `sed -i 's/\r$//' run-demo.sh` and try again. |
@@ -82,6 +84,7 @@ Smaller models are often worse at using tools, so results can differ from the vi
 ## Be careful
 These agents can read files and run commands on your machine. Run them in a folder you don't mind
 them touching, and read what a command does before you type `y`.
+The Code Mode agent (video 8) runs Python the model wrote. It is not a sandbox: use it on its demo folder only.
 
 ## License
 MIT. Use it, change it, build on it.

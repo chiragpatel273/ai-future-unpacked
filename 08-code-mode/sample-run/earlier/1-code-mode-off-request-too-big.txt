@@ -1,0 +1,63 @@
+﻿Code Mode: off   model: qwen/qwen3.8-27b
+
+[turn 1] context: 770 tokens
+  list_files {"folder": "."}
+    -> 466 characters back
+
+[turn 2] context: 961 tokens
+  read_file {"path": "README.md"}
+    -> 2,638 characters back
+  read_file {"path": "api\\cart.md"}
+    -> 1,928 characters back
+  read_file {"path": "api\\orders.md"}
+    -> 1,711 characters back
+  read_file {"path": "api\\pricing.md"}
+    -> 1,674 characters back
+  read_file {"path": "api\\products.md"}
+    -> 1,626 characters back
+  read_file {"path": "api\\webhooks.md"}
+    -> 1,671 characters back
+  read_file {"path": "getting-started\\configuration.md"}
+    -> 1,867 characters back
+  read_file {"path": "getting-started\\install.md"}
+    -> 1,904 characters back
+  read_file {"path": "getting-started\\quickstart.md"}
+    -> 1,986 characters back
+  read_file {"path": "guides\\coupons.md"}
+    -> 1,907 characters back
+  read_file {"path": "guides\\emails.md"}
+    -> 1,770 characters back
+  read_file {"path": "guides\\inventory.md"}
+    -> 1,637 characters back
+  read_file {"path": "guides\\refunds.md"}
+    -> 1,791 characters back
+  read_file {"path": "guides\\shipping.md"}
+    -> 1,832 characters back
+  read_file {"path": "guides\\taxes.md"}
+    -> 1,732 characters back
+  read_file {"path": "reference\\changelog.md"}
+    -> 1,586 characters back
+Traceback (most recent call last):
+  File "C:\Users\DELL\Videos\YouTube\01-long-videos\ep08-code-mode\code\code_mode_agent.py", line 191, in <module>
+    run_agent(" ".join(sys.argv[1:]))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\Videos\YouTube\01-long-videos\ep08-code-mode\code\code_mode_agent.py", line 151, in run_agent
+    response = client.chat.completions.create(model=MODEL, messages=messages, tools=specs)
+  File "C:\Users\DELL\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\DELL\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1611, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\DELL\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1474, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\DELL\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1248, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.APIStatusError: Error code: 413 - Request too large for model `qwen/qwen3.8-27b` in organization `org_01jzweg7tsfttvyajbc30a2r4t` service tier `on_demand` on input tokens per minute (ITPM): Limit 7000, Requested 10468, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing
