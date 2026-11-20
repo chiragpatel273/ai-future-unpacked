@@ -1,6 +1,6 @@
 # Why Claude Code hits your limit so fast (I ran 51 tests)
 
-Code and raw logs for the video **[Why Claude Code Hits Your Limit So Fast (I Ran 51 Tests)](https://youtu.be/mvpItwNsG0I)**.
+Code and raw logs for the video **[Why Claude Code Hits Your Limit So Fast (I Ran 51 Tests)](https://youtu.be/H5bkAmzCoic)**.
 
 `cc_tests.py` runs real Claude Code sessions on a real open-source project, [more-itertools](https://github.com/more-itertools/more-itertools) v10.7.0, and records how many tokens each one used. Every run is `claude -p ... --output-format json`, which reports the tokens per request. Each test runs 3 times.
 
@@ -46,7 +46,7 @@ Raw logs: `sample-results/` (local paths and my list of installed skills removed
 | vague prompt (Opus) | 9 / 25 / 7 requests; 327,732 / 464,315 / 248,867 tokens; $0.35 / $0.54 / $0.32 vs Sonnet $0.13 / $0.11 / $0.13 |
 | quick question (Opus) | 27,239 tokens × 3; $0.12 each vs Sonnet $0.07 / $0.06 / $0.06 |
 | test output raw vs hook (Sonnet) | 92,903 / 92,560 / 91,248 vs 92,543 / 91,269 / 91,709 tokens: no real difference |
-| `/context` memory files | 1.8k (107-line CLAUDE.md) vs 121 (7 lines); skills 9.9k |
+| `/context` memory files | 1.8k (107-line CLAUDE.md) vs 121 (7 lines); skill list 9.9k (names + descriptions only, mostly one plugin with 106 skills) |
 
 Why the hook made no difference: the raw test output was 71,397 characters. Claude Code only keeps about 30,000 characters of a successful command inline; past that, Claude gets a saved-file path plus a preview of up to the first 2,000 characters ([tools reference, Output limits](https://code.claude.com/docs/en/tools-reference)). My filter left 15,843 characters, which all went inline.
 

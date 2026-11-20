@@ -23,7 +23,7 @@ Standalone videos that measure real Claude Code behaviour. These use your own Cl
 
 | Video | Code |
 |-------|------|
-| [Why Claude Code Hits Your Limit So Fast (I Ran 51 Tests)](https://youtu.be/mvpItwNsG0I) | [`claude-code-limits/`](claude-code-limits/): scripts that measure Claude Code's tokens per request, plus my raw logs |
+| [Why Claude Code Hits Your Limit So Fast (I Ran 51 Tests)](https://youtu.be/H5bkAmzCoic) | [`claude-code-limits/`](claude-code-limits/): scripts that measure Claude Code's tokens per request, plus my raw logs |
 
 ## How to use this repo
 
