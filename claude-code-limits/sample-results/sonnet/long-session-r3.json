@@ -1,0 +1,607 @@
+[
+  {
+    "prompt": "Explain how windowed works in more_itertools/more.py, including the fillvalue and step arguments. Read the code you need.",
+    "row": [
+      "sonnet",
+      "long-session",
+      3,
+      1,
+      3,
+      6,
+      20271,
+      70305,
+      1389,
+      90582,
+      33292,
+      15.1,
+      0.102,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 11603,
+      "stop_reason": "end_turn",
+      "session_id": "7b72392c-4ff6-4f93-9bb1-9848c5a537e3",
+      "total_cost_usd": 0.10201650000000001,
+      "usage": {
+        "input_tokens": 6,
+        "cache_creation_input_tokens": 20271,
+        "cache_read_input_tokens": 70305,
+        "output_tokens": 1389,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 20271,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1119,
+            "cache_read_input_tokens": 30114,
+            "cache_creation_input_tokens": 3176,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 3176
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 6,
+          "outputTokens": 1389,
+          "cacheReadInputTokens": 70305,
+          "cacheCreationInputTokens": 20271,
+          "webSearchRequests": 0,
+          "costUSD": 0.10201650000000001,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 20271,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 3,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "`windowed(seq, n, fillvalue=None, step=1)` is at `more_itertools/more.py:900`. It's a generator that yields tuples of length `n`, sliding across the iterable.\n\n## How it works\n\n1. **Validation (927\u2013933).**\n   - `n < 0` raises `ValueError`.\n   - `n == 0` yields a single empty tuple `()` and stops.\n   - `step < 1` raises `ValueError`.\n   - The `n == 0` check comes before the `step` check, so `step` isn't validated when `n` is 0.\n\n2. **First window (938\u2013946).**\n   - `deque(islice(iterable, n), maxlen=n)` pulls up to `n` items.\n   - If the iterable is empty, it yields nothing.\n   - If it's non-empty but shorter than `n`, it yields one window padded on the right with `fillvalue`, then stops. For example, `windowed([1,2,3], 4)` gives `[(1, 2, 3, None)]`.\n   - Otherwise it yields the full first window.\n\n3. **Later windows (950\u2013955).**\n   - The deque has `maxlen=n`, so appending a new item drops the oldest one.\n   - `filler = map(window.append, chain(iterable, padding))` is lazy. Each item consumed from it appends one element to the deque.\n   - `islice(filler, step - 1, None, step)` consumes the filler in chunks of `step` items. It skips `step - 1` appends silently and yields on the `step`-th, so the loop body runs once per `step` appended items. That is what advances the window by `step`.\n   - `map(window.append, ...)` produces `None` each time, which is why the loop variable `_` is unused. The loop only reads `window` after the appends have happened.\n\n## `fillvalue`\n\n`fillvalue` is used in two places:\n\n- **A short first window.** If the input has fewer than `n` items, the single window is right-padded.\n- **The trailing partial window.** Line 950 builds `padding = (fillvalue,) * (n - 1 if step >= n else step - 1)`. That is the minimum padding needed so the last window can be completed:\n  - If `step >= n`, the last window needs at most `n - 1` fill values.\n  - If `step < n`, at most `step - 1` are needed. More would produce extra windows made up mostly of fill.\n  - This padding is chained after the real data, so it only gets appended once the iterable runs out.\n\nExample from the docstring:\n`windowed([1,2,3,4,5,6], 3, fillvalue='!', step=2)` gives `[(1,2,3), (3,4,5), (5,6,'!')]`.\n\n## `step`\n\n`step` is how far the window moves between yields. The default of 1 gives a window at every position. With `step=2`, windows start at indexes 0, 2, 4, and so on, so consecutive windows overlap by `n - step` items. When `step > n`, items between windows are skipped, so the windows don't overlap and some elements never appear. For example, `windowed(range(7), 2, step=3)` gives `(0,1), (3,4), (6,fill)`.\n\n## Notes\n\n- Windows are tuples, copied from the deque with `tuple(window)` on each yield.\n- To start with partial windows that slide in from the left, the docstring suggests prepending filler yourself with `chain([None] * (n - 1), iterable)`. `windowed` only pads on the right.",
+      "ttft_ms": 2360,
+      "type": "result",
+      "duration_ms": 12736,
+      "uuid": "e8176ac7-cbb0-4af2-83ad-ccd0bccdf44b",
+      "ttft_stream_ms": 1745,
+      "time_to_request_ms": 937,
+      "first_content_frame_ms": 1746,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 15.1
+    }
+  },
+  {
+    "prompt": "How is the package organised? Which kinds of functions live in more.py and which in recipes.py?",
+    "row": [
+      "sonnet",
+      "long-session",
+      3,
+      2,
+      3,
+      6,
+      6764,
+      106549,
+      2070,
+      113319,
+      40056,
+      20.4,
+      0.0584,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 26272,
+      "stop_reason": "end_turn",
+      "session_id": "7b72392c-4ff6-4f93-9bb1-9848c5a537e3",
+      "total_cost_usd": 0.1604394,
+      "usage": {
+        "input_tokens": 6,
+        "cache_creation_input_tokens": 6764,
+        "cache_read_input_tokens": 106549,
+        "output_tokens": 2070,
+        "output_tokens_details": {
+          "thinking_tokens": 38
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 6764,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1737,
+            "cache_read_input_tokens": 37905,
+            "cache_creation_input_tokens": 2149,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 2149
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 12,
+          "outputTokens": 3459,
+          "thinkingTokens": 38,
+          "cacheReadInputTokens": 176854,
+          "cacheCreationInputTokens": 27035,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 27035,
+          "webSearchRequests": 0,
+          "costUSD": 0.1604394,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 3,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "## Package layout (version 10.7.0)\n\n```\nmore_itertools/\n  __init__.py      # `from .more import *` and `from .recipes import *`, plus __version__\n  more.py          # ~5000 lines\n  recipes.py       # ~1300 lines\n  more.pyi, recipes.pyi, __init__.pyi, py.typed   # type stubs / PEP 561 marker\ntests/             # test_more.py, test_recipes.py (one test file per module)\ndocs/              # Sphinx docs (api.rst, etc.)\n```\n\n`__init__.py` re-exports everything in each module's `__all__`. Users import everything from the top-level `more_itertools`, and the split between the two modules is mostly internal. `more.py` imports `take` and similar helpers from `recipes.py`. For example, `chunked` uses `partial(take, n, ...)`.\n\n## `recipes.py`: the itertools documentation recipes\n\nIts docstring says it holds functions \"imported from the recipes section of the itertools documentation\", with some backward-compatible usability improvements. These are small, well-known building blocks:\n\n- **Consuming and slicing:** `take`, `tail`, `nth`, `consume`, `first_true`, `prepend`, `quantify`, `ncycles`, `repeatfunc`, `tabulate`, `iter_except`\n- **Padding and grouping:** `pad_none` / `padnone`, `grouper`, `batched`, `sliding_window`, `triplewise`, `pairwise`, `subslices`, `roundrobin`, `partition`, `before_and_after`\n- **Uniqueness:** `unique_everseen`, `unique_justseen`, `unique`, `all_equal`\n- **Combinatorics and randomness:** `powerset`, `nth_combination`, `random_product`, `random_permutation`, `random_combination`, `random_combination_with_replacement`\n- **Math-flavoured recipes:** `dotproduct`, `convolve`, `matmul`, `polynomial_eval`, `polynomial_from_roots`, `polynomial_derivative`, `sum_of_squares`, `sieve`, `factor`, `is_prime`, `totient`, `multinomial`, `transpose`, `reshape`, `flatten`\n\n## `more.py`: the \"more\" in more-itertools\n\nIt has about 100 public names that go beyond the stdlib recipes. Roughly:\n\n- **Chunking and windowing:** `chunked`, `chunked_even`, `ichunked`, `sliced`, `windowed`, `windowed_complete`, `substrings`, `stagger`, `divide`, `distribute`, `split_at` / `split_before` / `split_after` / `split_when` / `split_into`\n- **Interleaving and zipping:** `interleave`, `interleave_longest`, `interleave_evenly`, `zip_equal`, `zip_offset`, `zip_broadcast`, `intersperse`, `unzip`\n- **Querying:** `first`, `last`, `one`, `only`, `strictly_n`, `nth_or_last`, `exactly_n`, `locate`, `rlocate`, `ilen`, `minmax`, `is_sorted`, `all_unique`\n- **Filtering and mapping:** `filter_except`, `map_except`, `map_if`, `filter_map`, `replace`, `strip` / `lstrip` / `rstrip`, `takewhile_inclusive`\n- **Duplicates and uniqueness:** `duplicates_everseen`, `duplicates_justseen`, `classify_unique`, `unique_in_window`, `unique_to_each`, `distinct_permutations`, `distinct_combinations`\n- **Combinatorics and indexing:** `set_partitions`, `partitions`, `circular_shifts`, `gray_product`, `nth_permutation`, `nth_product`, `permutation_index`, `combination_index`, `product_index`\n- **Stateful iterator wrappers and classes:** `peekable`, `seekable`, `spy`, `bucket`, `callback_iter`, `countable`, `islice_extended`, `numeric_range`, `SequenceView`, `time_limited`, `with_iter`, `consumer`\n- **Utilities and misc:** `collapse`, `always_iterable`, `always_reversible`, `side_effect`, `iterate`, `run_length`, `map_reduce`, `groupby_transform`, `mark_ends`, `value_chain`, `sample`, `nth_prime`, `dft` / `idft`, `make_decorator`\n\nIt also contains helper code for `math.sumprod`: a fallback implementation for Python versions before 3.12.\n\n## Rule of thumb\n\n- **`recipes.py`** holds the recipes from the Python `itertools` docs, plus the math/number-theory helpers in the same style.\n- **`more.py`** holds everything the library added on top of those: chunking, splitting, windowing, peeking and seeking, grouping, and combinatorial indexing.\n\nThe split isn't strict. For example, `nth_combination` is in `recipes.py` and `nth_combination_with_replacement` is in `more.py`. Treat the lists above as a guide rather than a hard boundary.",
+      "ttft_ms": 2165,
+      "type": "result",
+      "duration_ms": 15867,
+      "uuid": "2b5543b8-3177-4278-b6f7-c4e6cc5f4635",
+      "ttft_stream_ms": 1463,
+      "time_to_request_ms": 593,
+      "first_content_frame_ms": 1464,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 20.4
+    }
+  },
+  {
+    "prompt": "Explain how peekable lets you look ahead and push items back.",
+    "row": [
+      "sonnet",
+      "long-session",
+      3,
+      3,
+      3,
+      6,
+      6678,
+      127481,
+      1509,
+      134165,
+      46734,
+      18.1,
+      0.0546,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 39190,
+      "stop_reason": "end_turn",
+      "session_id": "7b72392c-4ff6-4f93-9bb1-9848c5a537e3",
+      "total_cost_usd": 0.2150015,
+      "usage": {
+        "input_tokens": 6,
+        "cache_creation_input_tokens": 6678,
+        "cache_read_input_tokens": 127481,
+        "output_tokens": 1509,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 6678,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1231,
+            "cache_read_input_tokens": 44489,
+            "cache_creation_input_tokens": 2243,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 2243
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 18,
+          "outputTokens": 4968,
+          "thinkingTokens": 38,
+          "cacheReadInputTokens": 304335,
+          "cacheCreationInputTokens": 33713,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 33713,
+          "webSearchRequests": 0,
+          "costUSD": 0.2150015,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 3,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "`peekable` (`more_itertools/more.py:299`) wraps an iterator with a deque called `_cache` and keeps two things: `self._it`, the underlying iterator, and `self._cache`, a deque of items that have been pulled from `_it` or pushed back but not yet returned by `next()`.\n\nEverything else follows from one rule: **`__next__` serves from the cache first, then from the source.**\n\n```python\ndef __next__(self):\n    if self._cache:\n        return self._cache.popleft()\n    return next(self._it)\n```\n\n## Looking ahead\n\n**`peek(default=_marker)`** (line 372):\n- If the cache is empty, it pulls one item from `_it` and appends it to the cache.\n- It then returns `self._cache[0]` without removing it. The next `next()` pops that same item, so peeking never consumes anything.\n- If the source is exhausted, it re-raises `StopIteration`. If you passed a `default`, it returns that instead. `_marker` is a sentinel, so `None` can be a legitimate default.\n\n**`__bool__`** (line 365) calls `peek()` and catches `StopIteration`. This is why `if p:` tells you whether anything is left, and it doesn't lose the item it looked at.\n\n**Indexing with `p[i]`** (line 451) looks further ahead:\n- Index 0 is the next item, index 1 the one after, and so on.\n- For `index >= len(cache)`, it fills the cache up to that point with `islice(self._it, index + 1 - cache_len)`, then returns `self._cache[index]`.\n- Items up to that index are buffered and nothing is consumed.\n- **Negative indexes** do `self._cache.extend(self._it)`, which drains the entire source into memory. The docstring warns about this.\n\n**Slices** go through `_get_slice` (line 425):\n- It normalises `start`, `stop` and `step`, including negative steps. A zero step raises `ValueError`.\n- If `start` or `stop` is negative, it caches the whole remainder.\n- Otherwise it caches only up to `max(start, stop) + 1`.\n- It then slices `list(self._cache)`, so slice results are plain lists.\n\n## Pushing items back\n\n**`prepend(*items)`** (line 388) is a single line:\n\n```python\nself._cache.extendleft(reversed(items))\n```\n\n- `deque.extendleft` inserts items one at a time on the left, which reverses their order. Reversing the input first makes the items come out in the order you passed them.\n- `p.prepend(10, 11, 12)` makes the cache `[10, 11, 12, ...]`, so `next(p)` returns 10, then 11, then 12, then the original items.\n- Because `__next__` checks the cache first, the prepended items come before anything still in the source. This also works if the cache already holds peeked items.\n- The prepended items don't have to be ones you read from the iterator. They can be arbitrary values.\n- The docstring notes you can \"resurrect\" a peekable. After it raised `StopIteration`, `prepend(1)` makes `next()` return `1` again, because the cache check comes before the exhausted source.\n\n## Typical use\n\nThis is for parsers and tokenisers. You peek to decide what to do next, and if you read one item too far, you `prepend` it back. For example, grab an item with `next()`, find that it belongs to the next group, and push it back with `p.prepend(item)`.\n\n## Caveats\n\n- Peeking and indexing buffer items in memory. That is cheap for `peek()` but unbounded for negative indexes or slices.\n- The class isn't thread-safe, and nothing in it locks.\n- There's no `__len__`. Use `bool(p)` for emptiness only. `len(list(p))` consumes the peekable.",
+      "ttft_ms": 2387,
+      "type": "result",
+      "duration_ms": 13596,
+      "uuid": "652e9bc9-e3ca-4002-be1d-051cf046261b",
+      "ttft_stream_ms": 1751,
+      "time_to_request_ms": 523,
+      "first_content_frame_ms": 1752,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 18.1
+    }
+  },
+  {
+    "prompt": "Which functions in recipes.py also appear as recipes in the Python itertools docs? List five, one line each.",
+    "row": [
+      "sonnet",
+      "long-session",
+      3,
+      4,
+      1,
+      2,
+      2393,
+      46732,
+      304,
+      49127,
+      49127,
+      8.2,
+      0.0173,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 42102,
+      "stop_reason": "end_turn",
+      "session_id": "7b72392c-4ff6-4f93-9bb1-9848c5a537e3",
+      "total_cost_usd": 0.23229070000000002,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 2393,
+        "cache_read_input_tokens": 46732,
+        "output_tokens": 304,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 2393,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 304,
+            "cache_read_input_tokens": 46732,
+            "cache_creation_input_tokens": 2393,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 2393
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 20,
+          "outputTokens": 5272,
+          "thinkingTokens": 38,
+          "cacheReadInputTokens": 351067,
+          "cacheCreationInputTokens": 36106,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 36106,
+          "webSearchRequests": 0,
+          "costUSD": 0.23229070000000002,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "These are from the itertools docs recipes section, which the `recipes.py` docstring cites. I'm going from what I know of those docs rather than checking them. I did read `recipes.py`'s `__all__` earlier.\n\n- **`take(n, iterable)`**: returns the first `n` items as a list.\n- **`tail(n, iterable)`**: returns an iterator over the last `n` items.\n- **`nth(iterable, n, default=None)`**: returns the `n`th item, or the default.\n- **`powerset(iterable)`**: yields all subsets, from the empty one up to the full set.\n- **`roundrobin(*iterables)`**: yields items from each iterable in turn, e.g. `roundrobin('ABC', 'D', 'EF')` gives A D E B F C.\n\nOthers in the same family are `consume`, `pairwise`, `partition`, `grouper`, `unique_everseen` and `flatten`.",
+      "ttft_ms": 3481,
+      "type": "result",
+      "duration_ms": 3519,
+      "uuid": "e28f2587-cb3e-499b-af96-e1f051e5480a",
+      "ttft_stream_ms": 1376,
+      "time_to_request_ms": 617,
+      "first_content_frame_ms": 1376,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 8.2
+    }
+  },
+  {
+    "prompt": "One quick question: what does more_itertools.chunked do with the leftover items when they don't fill a whole chunk?",
+    "row": [
+      "sonnet",
+      "long-session",
+      3,
+      5,
+      1,
+      4,
+      342,
+      49125,
+      193,
+      49471,
+      49471,
+      7.2,
+      0.0082,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 44103,
+      "stop_reason": "end_turn",
+      "session_id": "7b72392c-4ff6-4f93-9bb1-9848c5a537e3",
+      "total_cost_usd": 0.2405092,
+      "usage": {
+        "input_tokens": 4,
+        "cache_creation_input_tokens": 342,
+        "cache_read_input_tokens": 49125,
+        "output_tokens": 193,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 342,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 4,
+            "output_tokens": 193,
+            "cache_read_input_tokens": 49125,
+            "cache_creation_input_tokens": 342,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 342
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 24,
+          "outputTokens": 5465,
+          "thinkingTokens": 38,
+          "cacheReadInputTokens": 400192,
+          "cacheCreationInputTokens": 36448,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 36448,
+          "webSearchRequests": 0,
+          "costUSD": 0.2405092,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "By default, `chunked` yields the leftover items as a shorter final list. I saw this in the source earlier. `list(chunked([1,2,3,4,5,6,7,8], 3))` gives `[[1,2,3],[4,5,6],[7,8]]`.\n\n- **`strict=True`:** a short final chunk raises `ValueError('iterable is not divisible by n.')`. The error is raised before that last chunk is yielded.\n- **Padding:** `chunked` never pads. To fill the last chunk with a value, use the `grouper` recipe with a `fillvalue`.",
+      "ttft_ms": 2515,
+      "type": "result",
+      "duration_ms": 2548,
+      "uuid": "6691052e-b854-4bc4-8373-ced569a9fe51",
+      "ttft_stream_ms": 1316,
+      "time_to_request_ms": 558,
+      "first_content_frame_ms": 1317,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 7.2
+    }
+  }
+]

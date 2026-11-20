@@ -1,0 +1,123 @@
+[
+  {
+    "prompt": "In more_itertools/more.py, does chunked raise an error when n is 0? Do not change any files; reply in two sentences.",
+    "row": [
+      "sonnet",
+      "specific-prompt",
+      1,
+      1,
+      2,
+      4,
+      18166,
+      40198,
+      322,
+      58368,
+      31187,
+      8.0,
+      0.0799,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 3898,
+      "stop_reason": "end_turn",
+      "session_id": "8b831687-ae98-49cd-a91a-a5d12caccc9b",
+      "total_cost_usd": 0.0799118,
+      "usage": {
+        "input_tokens": 4,
+        "cache_creation_input_tokens": 18166,
+        "cache_read_input_tokens": 40198,
+        "output_tokens": 322,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 18166,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 143,
+            "cache_read_input_tokens": 27179,
+            "cache_creation_input_tokens": 4006,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 4006
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 4,
+          "outputTokens": 322,
+          "cacheReadInputTokens": 40198,
+          "cacheCreationInputTokens": 18166,
+          "webSearchRequests": 0,
+          "costUSD": 0.0799118,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 18166,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 2,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "Not explicitly. `chunked` (`more_itertools/more.py:192`) has no check on `n`, so `chunked(iterable, 0)` doesn't raise. `take(0, ...)` returns an empty list right away, which is the iterator's sentinel, so the result is just an empty iterator. The only `ValueError`s are in strict mode: one when `n` is `None`, and one when the last chunk's length isn't `n`.",
+      "ttft_ms": 3029,
+      "type": "result",
+      "duration_ms": 5134,
+      "uuid": "6f4f4cef-b2ef-4e68-a4ae-d52f1f2a28bc",
+      "ttft_stream_ms": 2175,
+      "time_to_request_ms": 1142,
+      "first_content_frame_ms": 2175,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 8.0
+    }
+  }
+]

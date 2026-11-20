@@ -1,0 +1,140 @@
+[
+  {
+    "prompt": "Improve the error handling in this project. Do not change any files; reply with a short list.",
+    "row": [
+      "opus",
+      "vague-prompt",
+      3,
+      1,
+      7,
+      14,
+      27621,
+      221232,
+      2550,
+      248867,
+      40642,
+      34.2,
+      0.3163,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 28280,
+      "stop_reason": "end_turn",
+      "session_id": "57766fb3-38f7-4014-b349-e0ecee4949f7",
+      "total_cost_usd": 0.31627039999999995,
+      "usage": {
+        "input_tokens": 14,
+        "cache_creation_input_tokens": 27621,
+        "cache_read_input_tokens": 221232,
+        "output_tokens": 2550,
+        "output_tokens_details": {
+          "thinking_tokens": 389
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 27621,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1200,
+            "cache_read_input_tokens": 39285,
+            "cache_creation_input_tokens": 1355,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1355
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-opus-5-5": {
+          "inputTokens": 14,
+          "outputTokens": 2550,
+          "cacheReadInputTokens": 221232,
+          "cacheCreationInputTokens": 27621,
+          "webSearchRequests": 0,
+          "costUSD": 0.31627039999999995,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 389,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 27621,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_01QfMoDLJTMWGz8d7a6vEekv",
+          "tool_input": {
+            "command": "find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' | head -100 && wc -l $(find . -type f -not -path '*/node_modules/*' | head -50) 2>/dev/null | tail -1",
+            "description": "List project files and line counts"
+          }
+        },
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_01XNu9MyWCWbPriSN55dcmCK",
+          "tool_input": {
+            "command": "cd /tmp/cc-tests-work/opus/vague-prompt-r3/more_itertools && for r in recipes.py:700:730 recipes.py:1190:1205 more.py:265:282 more.py:1205:1220 more.py:1920:1940 more.py:2790:2800 more.py:3420:3432 more.py:4070:4165 more.py:4655:4670 more.py:5005:5020 more.py:3935:3980 more.py:1765:1775; do f=${r%%:*}; rest=${r#*:}; echo \"== $r\"; sed -n \"${rest%%:*},${rest##*:}p\" $f; done",
+            "description": "Print selected code ranges around raise sites"
+          }
+        }
+      ],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 7,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "This is the `more-itertools` library. The error handling is mostly solid, but these are the spots I'd improve. I haven't changed any files.\n\n1. **Exceptions with no message.** Several functions raise a bare `ValueError` or `IndexError` with no text, so callers get an empty traceback line. Each should say which argument was wrong and what the valid range is:\n   - `nth_combination` (`recipes.py:714`, `recipes.py:725`)\n   - `nth_permutation` (`more.py:4111`, `more.py:4120`)\n   - `nth_combination_with_replacement` (`more.py:4154`, `more.py:4162`)\n   - `nth_prime` (`more.py:5018`)\n   - `SequenceView.__init__` (`more.py:2797`, a bare `TypeError`)\n\n2. **Missing `raise ... from`.** A few handlers turn one exception into another without chaining, so the traceback shows \"During handling of the above exception, another exception occurred\". Add `from exc` (or `from None` if the original isn't useful), as `minmax` already does at `more.py:4663`. Locations: `last()` at `more.py:275` and `interleave_evenly` at `more.py:1213`.\n\n3. **`assert` doing a real check.** `nth_permutation` uses `assert c > 0` (`more.py:4114`). Running Python with `-O` removes asserts. This one is a logic invariant rather than input validation, so it's low risk. Still, make it an explicit check or delete it. The asserts in `_shift_to_odd` and `_strong_probable_prime` (`recipes.py:1197`, `recipes.py:1202`) are internal invariants, so they're fine.\n\n4. **`try` blocks that cover too much.** In `last()` (`more.py:273`), one `except (IndexError, TypeError, StopIteration)` wraps the whole lookup. A `TypeError` or `IndexError` raised inside a user's own `__reversed__` or `__getitem__` gets silently turned into \"empty iterable\" or the default value. `_zip_equal` (`recipes.py:385`) has the same issue: it treats any `TypeError` as \"this object has no length\". Narrow each `try` to just the call that's expected to fail.\n\n5. **Raising `StopIteration` as a signal.** `unzip`'s custom getter (`more.py:1936`) raises `StopIteration` so that `map` stops early. That works now, but it would break silently if someone moved the code into a generator (since Python 3.7, PEP 479 turns a `StopIteration` inside a generator into a `RuntimeError`). Use an explicit loop or `takewhile` with a sentinel instead.\n\n6. **Error messages are inconsistent.** Some say \"n must be at least 1\", others \"n must be > 0\" or \"n must be greater than 0\". Some include the function name and offending value (`batched`, `numeric_range`) and most don't. Pick one format, ideally `func(): arg must be \u2026, got {value!r}`.\n\n7. **Tests don't check messages.** Add `assertRaisesRegex` tests for the new messages in item 1 and for exception chaining in item 2, so they don't quietly regress back to bare exceptions.",
+      "ttft_ms": 2052,
+      "type": "result",
+      "duration_ms": 29526,
+      "uuid": "5e5601ae-3e70-4566-b9b1-d4b9d82fe6bc",
+      "ttft_stream_ms": 1572,
+      "time_to_request_ms": 447,
+      "first_content_frame_ms": 1573,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 34.2
+    }
+  }
+]

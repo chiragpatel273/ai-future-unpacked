@@ -1,0 +1,123 @@
+[
+  {
+    "prompt": "One quick question: what does more_itertools.chunked do with the leftover items when they don't fill a whole chunk?",
+    "row": [
+      "opus",
+      "quick-question",
+      2,
+      1,
+      1,
+      2,
+      14218,
+      13019,
+      349,
+      27239,
+      27239,
+      7.9,
+      0.1233,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 4346,
+      "stop_reason": "end_turn",
+      "session_id": "cf47a7c9-2309-4519-b6d9-f3b152a6972d",
+      "total_cost_usd": 0.1233358,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 14218,
+        "cache_read_input_tokens": 13019,
+        "output_tokens": 349,
+        "output_tokens_details": {
+          "thinking_tokens": 63
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 14218,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 349,
+            "cache_read_input_tokens": 13019,
+            "cache_creation_input_tokens": 14218,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 14218
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-opus-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 349,
+          "cacheReadInputTokens": 13019,
+          "cacheCreationInputTokens": 14218,
+          "webSearchRequests": 0,
+          "costUSD": 0.1233358,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 63,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 14218,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "By default, `more_itertools.chunked` puts the leftovers in a **shorter final chunk**. It doesn't pad them or drop them:\n\n```python\n>>> from more_itertools import chunked\n>>> list(chunked([1, 2, 3, 4, 5, 6, 7, 8], 3))\n[[1, 2, 3], [4, 5, 6], [7, 8]]\n```\n\nYou can change this in two ways:\n- **`strict=True`**: raises a `ValueError` if the length isn't a multiple of `n`, instead of returning a short chunk.\n- **Padding**: if you want the last chunk filled to full size, use `more_itertools.grouper(iterable, n, incomplete='fill', fillvalue=None)`.\n\nEach chunk is a list. If you'd rather not build lists in memory, `ichunked` gives you sub-iterables instead.",
+      "ttft_ms": 2633,
+      "type": "result",
+      "duration_ms": 5340,
+      "uuid": "d38d32a4-9d20-413f-b959-c03381ff0137",
+      "ttft_stream_ms": 1977,
+      "time_to_request_ms": 997,
+      "first_content_frame_ms": 1977,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 7.9
+    }
+  }
+]

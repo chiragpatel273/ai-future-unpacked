@@ -1,0 +1,123 @@
+[
+  {
+    "prompt": "Improve the error handling in this project. Do not change any files; reply with a short list.",
+    "row": [
+      "sonnet",
+      "vague-prompt",
+      2,
+      1,
+      5,
+      8,
+      21982,
+      104893,
+      1478,
+      126883,
+      35003,
+      18.4,
+      0.1132,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 14231,
+      "stop_reason": "end_turn",
+      "session_id": "fdb2074a-d63f-4246-87f3-96456637b9d5",
+      "total_cost_usd": 0.1132133,
+      "usage": {
+        "input_tokens": 8,
+        "cache_creation_input_tokens": 21982,
+        "cache_read_input_tokens": 104893,
+        "output_tokens": 1478,
+        "output_tokens_details": {
+          "thinking_tokens": 90
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 21982,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 780,
+            "cache_read_input_tokens": 34383,
+            "cache_creation_input_tokens": 618,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 618
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 8,
+          "outputTokens": 1478,
+          "cacheReadInputTokens": 104893,
+          "cacheCreationInputTokens": 21982,
+          "webSearchRequests": 0,
+          "costUSD": 0.1132133,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 90,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 21982,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 5,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "This is `more-itertools`, a library, so error handling here mostly means raising clear exceptions. I didn't change any files. Here is what I'd improve:\n\n- **Add messages to bare raises.** Many raise `ValueError`, `IndexError` or `TypeError` with no message. Examples are `recipes.py:714` and `recipes.py:725`, plus `more.py:2797`, `more.py:4080`, `more.py:4111`, `more.py:4120` and `more.py:5018`. Something like `raise ValueError(f\"r must be between 0 and {n}, got {r}\")` would help users debug.\n- **Replace `assert` used for validation.** `recipes.py:1197` and `recipes.py:1202` (the primality helpers) and `more.py:4114` disappear under `python -O`. Use real exceptions for input checks, and keep `assert` only for true internal invariants.\n- **Narrow the broad `except TypeError` fallbacks.** About 15 sites, such as `more.py:804`, `1212`, `1977` and `2043`, use them to probe whether something is sized or indexable. A `TypeError` raised inside user code or a user's iterable can be silently swallowed and sent down the fallback path. Wrap only the specific call, such as `len()`, in the `try`.\n- **Fix bare `except StopIteration` handling.** Check the `next()` calls around `more.py:368`, `1066` and `2383`. Inside generators, a stray `StopIteration` can end iteration silently (PEP 479), so check each one is intentional.\n- **Make validation consistent.** Argument checks happen at different times. Generator functions validate lazily on first `next()`, while others validate eagerly. Validating eagerly with a wrapper around the generator makes errors appear at the call site.\n- **Preserve exception context.** Use `raise ... from exc`, or `from None` where deliberate, when converting exceptions. `UnequalIterablesError` (`recipes.py:369`) could also carry the mismatched lengths or positions.\n- **Test the error paths.** Add tests that assert the exception type and message (`assertRaisesRegex`) for each new message and validation. Also check that the `.pyi` stubs and docstrings document which exceptions each function raises.\n\nI can implement any of these if you want, starting with the messages and the `assert` replacements, which are low risk.",
+      "ttft_ms": 2094,
+      "type": "result",
+      "duration_ms": 15759,
+      "uuid": "6beff877-0cd0-49fd-8d86-aa0f61fad463",
+      "ttft_stream_ms": 1814,
+      "time_to_request_ms": 987,
+      "first_content_frame_ms": 1815,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 18.4
+    }
+  }
+]

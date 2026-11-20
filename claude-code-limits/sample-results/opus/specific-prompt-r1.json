@@ -1,0 +1,132 @@
+[
+  {
+    "prompt": "In more_itertools/more.py, does chunked raise an error when n is 0? Do not change any files; reply in two sentences.",
+    "row": [
+      "opus",
+      "specific-prompt",
+      1,
+      1,
+      4,
+      8,
+      22073,
+      107023,
+      874,
+      129104,
+      35094,
+      16.6,
+      0.2155,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 12527,
+      "stop_reason": "end_turn",
+      "session_id": "5f2c7cc2-3135-4cd3-818f-695d0f68757e",
+      "total_cost_usd": 0.21550060000000001,
+      "usage": {
+        "input_tokens": 8,
+        "cache_creation_input_tokens": 22073,
+        "cache_read_input_tokens": 107023,
+        "output_tokens": 874,
+        "output_tokens_details": {
+          "thinking_tokens": 225
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 22073,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 196,
+            "cache_read_input_tokens": 34033,
+            "cache_creation_input_tokens": 1059,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1059
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-opus-5-5": {
+          "inputTokens": 8,
+          "outputTokens": 874,
+          "cacheReadInputTokens": 107023,
+          "cacheCreationInputTokens": 22073,
+          "webSearchRequests": 0,
+          "costUSD": 0.21550060000000001,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 225,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 22073,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_01Cib1tdMmabBxRHXrCQnZRL",
+          "tool_input": {
+            "command": "python3 -I -c \"import sys; sys.path.insert(0,'.'); from more_itertools.more import chunked; print(list(chunked([1,2,3],0)), list(chunked([1,2,3],0,strict=True)))\"",
+            "description": "Call chunked with n=0 to check behavior"
+          }
+        }
+      ],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 4,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "No: `chunked` (`more_itertools/more.py:211`) builds its output with `iter(partial(take, n, ...), [])`, and when n is 0, `take` returns `[]` right away, which matches the stop value, so you get an empty iterator instead of an error, even with `strict=True` (that mode only rejects `n=None`). This is from reading the code, since running a quick check needed approval I didn't get, but note that a negative n does raise a `ValueError` from `islice`.",
+      "ttft_ms": 3815,
+      "type": "result",
+      "duration_ms": 13752,
+      "uuid": "3d123634-4340-4b53-a4bd-b548a145710e",
+      "ttft_stream_ms": 2393,
+      "time_to_request_ms": 984,
+      "first_content_frame_ms": 2395,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 16.6
+    }
+  }
+]

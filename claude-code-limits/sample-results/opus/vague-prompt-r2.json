@@ -1,0 +1,148 @@
+[
+  {
+    "prompt": "Improve the error handling in this project. Do not change any files; reply with a short list.",
+    "row": [
+      "opus",
+      "vague-prompt",
+      2,
+      1,
+      25,
+      22,
+      41112,
+      423181,
+      6317,
+      464315,
+      54133,
+      67.1,
+      0.54,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 63261,
+      "stop_reason": "end_turn",
+      "session_id": "c055480b-48e2-49f9-91f8-3a31bd316b1e",
+      "total_cost_usd": 0.5399602000000001,
+      "usage": {
+        "input_tokens": 22,
+        "cache_creation_input_tokens": 41112,
+        "cache_read_input_tokens": 423181,
+        "output_tokens": 6317,
+        "output_tokens_details": {
+          "thinking_tokens": 1293
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 41112,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1405,
+            "cache_read_input_tokens": 53507,
+            "cache_creation_input_tokens": 624,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 624
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-opus-5-5": {
+          "inputTokens": 22,
+          "outputTokens": 6317,
+          "cacheReadInputTokens": 423181,
+          "cacheCreationInputTokens": 41112,
+          "webSearchRequests": 0,
+          "costUSD": 0.5399602000000001,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 1293,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 41112,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_01MHy3RmVoVjFcittKQhpMYs",
+          "tool_input": {
+            "command": "find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' | head -100 && wc -l $(find . -type f -not -path '*/node_modules/*' | head -50) 2>/dev/null | tail -1",
+            "description": "List project files"
+          }
+        },
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_0129jzWSeCrJCrBC2nKStiHf",
+          "tool_input": {
+            "command": "cd /tmp/cc-tests-work/opus/vague-prompt-r2/more_itertools; for r in recipes.py:700-730 recipes.py:1055-1066 recipes.py:1190-1205 recipes.py:360-390 more.py:205-222 more.py:240-300 more.py:590-615 more.py:1205-1220 more.py:1290-1305 more.py:2790-2800 more.py:3410-3470 more.py:4070-4165 more.py:4205-4232 more.py:4650-4670 more.py:5005-5020 more.py:3600-3645 more.py:4870-4885; do f=${r%%:*}; l=${r#*:}; echo \"=== $r\"; sed -n \"${l/-/,}p\" $f; done",
+            "description": "Print relevant error-handling snippets"
+          }
+        },
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_012nR3yegx6TRRnGULM2nDAo",
+          "tool_input": {
+            "command": "cd /tmp && python3 -I -c \"\nimport sys; sys.path.insert(0,'/tmp/cc-tests-work/opus/vague-prompt-r2')\nimport more_itertools as m\nfor name, f in [('zip_equal()', lambda: m.zip_equal()),\n                ('last(gen raising TypeError)', lambda: m.last((x for x in [1, None] if x+1), default='D')),\n                ('value_chain partial', lambda: list(m.value_chain((i if i<2 else 1+'' for i in range(3))))),\n                ('nth_combination bad r', lambda: m.nth_combination('ab', 5, 0)),\n                ('SequenceView(set)', lambda: m.SequenceView({1}))]:\n    try: print(name, '->', repr(f()))\n    except Exception as e: print(name, '-> raised', type(e).__name__, repr(str(e)))\n\"",
+            "description": "Probe suspected error-handling edge cases"
+          }
+        }
+      ],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 25,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "I didn't change any files. This is the `more-itertools` library, so the list is about where its exceptions get swallowed, hidden or left unexplained. I found these by reading the code. I couldn't run my test snippet because it needed approval, so none of these has been confirmed by running it.\n\n**Errors from the user's own code get swallowed (real bugs)**\n1. **`value_chain`** (`more.py:4208-4211`): the `try` wraps `yield from value`. If a nested iterable raises `TypeError` partway through, the error is hidden: the items already produced stay, and then the iterable itself is also produced as a value. Fix: call `iter(value)` inside the `try`, and do the `yield from` in an `else:` block.\n2. **`last`** (`more.py:266-279`): it catches `IndexError`, `TypeError` and `StopIteration` around code that consumes the whole iterable. If the user's generator raises one of those, `last` returns `default` or says \"empty iterable\". Fix: wrap only the empty-check (`[-1]` on an empty result, `next(reversed(...))`), not the iteration itself.\n3. **`_zip_equal`** (`recipes.py:375-386`): the `try` around the length check also covers `zip(*iterables)`, so a `TypeError` from that call quietly switches to the slow generator path. Limit the `try` to the `len()` calls.\n\n**Edge case with a confusing error**\n4. **`zip_equal()` with no arguments** (`recipes.py:376`): `iterables[0]` raises `IndexError`, while the built-in `zip()` just returns an empty iterator. Check for no arguments first.\n\n**Exceptions with no message**\n5. Several functions raise bare `ValueError`, `IndexError` or `TypeError` with no message:\n   - `nth_combination` (`recipes.py:714, 725`)\n   - `nth_product` (`more.py:4080`)\n   - `nth_permutation` (`more.py:4111, 4120`)\n   - `nth_combination_with_replacement` (`more.py:4154, 4162`)\n   - `nth_prime` (`more.py:5018`)\n   - `SequenceView.__init__` (`more.py:2797`)\n\n   Add messages, e.g. `f'r must be between 0 and {n}, got {r}'` or `f'index {index} out of range'`.\n\n**Misleading or incomplete messages**\n6. `time_limited` (`more.py:3415`) says \"must be positive\", but zero is accepted. It should say \"non-negative\".\n7. `_zip_equal_generator` (`recipes.py:369`) raises `UnequalIterablesError()` without saying which iterable ran out or at which position, unlike the sized path just below it.\n8. `_factor_pollard` (`recipes.py:1064`): the message \"prime or under 5\" is terse. Say what input was rejected and why.\n\n**Exception chaining**\n9. Errors raised inside `except` blocks don't use `from`, so tracebacks show \"During handling of the above exception\u2026\": `last` (`more.py:275`) and `interleave_evenly` (`more.py:1213`). Use `from None`, or `from exc` as `minmax` already does at `more.py:4666`.\n\n**Asserts used as checks**\n10. `_shift_to_odd` and `_strong_probable_prime` (`recipes.py:1197, 1202`) and `nth_permutation` (`more.py:4114`) rely on `assert`, which is skipped when Python runs with `-O`. The first two are private helpers, so this is fine if they're meant as internal sanity checks. Otherwise, replace them with explicit `raise` statements.\n\n**API consistency**\n11. `one`, `only` and `strictly_n` take `too_long`/`too_short` as either a class or an instance. When a class is passed it's raised with no message, so the detailed \"got X, Y\" text is lost. Consider instantiating it with `msg` when it's a class.\n\nItems 1\u20133 are the most important, because they hide real errors from the user's code. The rest only make errors clearer.",
+      "ttft_ms": 3674,
+      "type": "result",
+      "duration_ms": 64764,
+      "uuid": "8447002d-bc17-4203-837e-ff0fa8e8bc7c",
+      "ttft_stream_ms": 2367,
+      "time_to_request_ms": 888,
+      "first_content_frame_ms": 2369,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 67.1
+    }
+  }
+]

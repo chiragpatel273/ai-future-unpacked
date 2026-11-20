@@ -1,0 +1,131 @@
+[
+  {
+    "prompt": "Improve the error handling in this project. Do not change any files; reply with a short list.",
+    "row": [
+      "sonnet",
+      "vague-prompt",
+      3,
+      1,
+      6,
+      10,
+      24147,
+      143261,
+      1469,
+      167418,
+      37168,
+      18.5,
+      0.1256,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 14658,
+      "stop_reason": "end_turn",
+      "session_id": "fb14fda0-5716-4421-93a8-619d84ba82fe",
+      "total_cost_usd": 0.1256241,
+      "usage": {
+        "input_tokens": 10,
+        "cache_creation_input_tokens": 24147,
+        "cache_read_input_tokens": 143261,
+        "output_tokens": 1469,
+        "output_tokens_details": {
+          "thinking_tokens": 90
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 24147,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 689,
+            "cache_read_input_tokens": 36594,
+            "cache_creation_input_tokens": 572,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 572
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 10,
+          "outputTokens": 1469,
+          "cacheReadInputTokens": 143261,
+          "cacheCreationInputTokens": 24147,
+          "webSearchRequests": 0,
+          "costUSD": 0.1256241,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 90,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 24147,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_019Bt3AccgAcMyBsJJ1RU7wW",
+          "tool_input": {
+            "command": "cd /tmp/cc-tests-work/sonnet/vague-prompt-r3/more_itertools; sed -n 1920,1938p more.py; sed -n 3420,3433p more.py; sed -n 4076,4081p more.py; sed -n 4108,4112p more.py; sed -n 2794,2798p more.py; grep -n \"except.*:$\" -A1 more.py recipes.py | grep -B1 \"pass$\" | head"
+          }
+        }
+      ],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 6,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "Those `raise StopIteration` calls are inside `__next__`, so they're fine. This list is from a grep pass plus two spot-checks, not a full audit. Nothing was changed.\n\n- **Bare exceptions with no message:** `raise IndexError` (`more.py:4080`, `4120`, `4162`) and `raise ValueError` (`4111`, `4154`) in the nth-permutation/combination/product helpers give no context. Add messages such as \"index out of range\" with the actual values. `raise TypeError` at `2797` has the same problem.\n- **Inconsistent validation messages:** the `n must be ...` messages vary in wording and boundary (\"must be > 0\", \"at least 1\", \"greater than 0\"). Standardize them and include the offending value, as `numeric_range` does at `2333`.\n- **Wrong exception types:** some argument-validation errors may be better as `TypeError` than `ValueError`. Those with `except TypeError: raise ValueError(...)` (`1212`, `273`) should use `raise ... from None` or `from err`, so the exception chaining is deliberate.\n- **Missing validation:** check `more.pyi` against the runtime. Some functions, such as `sample` and `chunked`, may accept bad input silently, so add upfront checks where they're missing.\n- **Non-obvious failures:** the `except TypeError` fallbacks (`804`, `1977`, `2043`, `2671`, `4052` and others) can mask real `TypeError`s raised by user callables. Narrow the `try` scope to just the `len()` or indexing call.\n- **`assert` for logic (`4114`):** it's an internal invariant, so it's okay, but `python -O` strips it. Don't rely on it for input checks.\n- **Tests:** add `assertRaises` and message checks for the error paths above, in `tests/test_more.py` and `tests/test_recipes.py`.\n- **Docs:** document the raised exceptions in the docstrings where they're missing, particularly for the bare raises.\n\nIf you want, I can do a deeper pass on one file or turn this into patches.",
+      "ttft_ms": 2228,
+      "type": "result",
+      "duration_ms": 15995,
+      "uuid": "7ef75b12-3c08-478c-ba75-e52638a2f092",
+      "ttft_stream_ms": 1928,
+      "time_to_request_ms": 1073,
+      "first_content_frame_ms": 1929,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 18.5
+    }
+  }
+]

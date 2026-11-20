@@ -18,6 +18,13 @@ video, small enough to read in a few minutes.
 The folders build on each other: each video takes the agent from the one before and adds one idea.
 You can still run any folder on its own.
 
+### Claude Code tips
+Standalone videos that measure real Claude Code behaviour. These use your own Claude Code login, not the Groq setup below.
+
+| Video | Code |
+|-------|------|
+| [Why Claude Code Hits Your Limit So Fast (I Ran 51 Tests)](https://youtu.be/mvpItwNsG0I) | [`claude-code-limits/`](claude-code-limits/): scripts that measure Claude Code's tokens per request, plus my raw logs |
+
 ## How to use this repo
 
 ### 1. One-time setup (about 5 minutes)
@@ -77,6 +84,7 @@ Smaller models are often worse at using tools, so results can differ from the vi
 | `401` / `Invalid API Key` | The key is wrong or was revoked. Create a new one at console.groq.com. |
 | `429` / `rate limit` | The free plan has per-minute limits. The code waits and retries; if it still fails, wait a minute. |
 | `413` / `Request too large` | One request is bigger than the free plan's per-minute token limit. Use a model with higher limits, or turn on Code Mode (video 8), which keeps requests small. |
+| `Not logged in · Please run /login` (claude-code-limits) | The script found a Claude Code that isn't logged in. Run `claude` in the same place (Windows or WSL) and type `/login`. |
 | `'git' is not recognized` | Install Git, then open a new terminal. |
 | `run-demo.ps1 cannot be loaded ... disabled on this system` | Double-click `run-demo.bat` instead: it runs the script without changing your settings. |
 | `bash: run-demo.sh: /bin/bash^M: bad interpreter` | The file got Windows line endings. Run `sed -i 's/\r$//' run-demo.sh` and try again. |

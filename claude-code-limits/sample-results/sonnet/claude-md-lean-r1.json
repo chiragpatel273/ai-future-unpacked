@@ -1,0 +1,123 @@
+[
+  {
+    "prompt": "What does more_itertools.first do when the iterable is empty and no default is given? One sentence.",
+    "row": [
+      "sonnet",
+      "claude-md-lean",
+      1,
+      1,
+      2,
+      4,
+      18458,
+      40440,
+      166,
+      58902,
+      31479,
+      6.4,
+      0.0795,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 2654,
+      "stop_reason": "end_turn",
+      "session_id": "1193f745-e893-4e41-9177-fea60ccc1de3",
+      "total_cost_usd": 0.079544,
+      "usage": {
+        "input_tokens": 4,
+        "cache_creation_input_tokens": 18458,
+        "cache_read_input_tokens": 40440,
+        "output_tokens": 166,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 18458,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 13,
+            "cache_read_input_tokens": 27421,
+            "cache_creation_input_tokens": 4056,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 4056
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 4,
+          "outputTokens": 166,
+          "cacheReadInputTokens": 40440,
+          "cacheCreationInputTokens": 18458,
+          "webSearchRequests": 0,
+          "costUSD": 0.079544,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 18458,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 2,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "It raises a `ValueError`.",
+      "ttft_ms": 2537,
+      "type": "result",
+      "duration_ms": 3568,
+      "uuid": "122374aa-1ee2-47a1-8971-cbad24dfd42c",
+      "ttft_stream_ms": 1806,
+      "time_to_request_ms": 830,
+      "first_content_frame_ms": 1807,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 6.4
+    }
+  }
+]

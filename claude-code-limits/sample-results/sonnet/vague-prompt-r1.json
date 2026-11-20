@@ -1,0 +1,131 @@
+[
+  {
+    "prompt": "Improve the error handling in this project. Do not change any files; reply with a short list.",
+    "row": [
+      "sonnet",
+      "vague-prompt",
+      1,
+      1,
+      7,
+      10,
+      24931,
+      142967,
+      1733,
+      167908,
+      37952,
+      19.2,
+      0.1314,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 15215,
+      "stop_reason": "end_turn",
+      "session_id": "6d90d6c8-4f31-4698-876a-40ffd8dead49",
+      "total_cost_usd": 0.1313707,
+      "usage": {
+        "input_tokens": 10,
+        "cache_creation_input_tokens": 24931,
+        "cache_read_input_tokens": 142967,
+        "output_tokens": 1733,
+        "output_tokens_details": {
+          "thinking_tokens": 114
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 24931,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 859,
+            "cache_read_input_tokens": 36350,
+            "cache_creation_input_tokens": 1600,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1600
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 10,
+          "outputTokens": 1733,
+          "cacheReadInputTokens": 142967,
+          "cacheCreationInputTokens": 24931,
+          "webSearchRequests": 0,
+          "costUSD": 0.1313707,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 114,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 24931,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_0196JN3KG3RFPznJQkFfdtjq",
+          "tool_input": {
+            "command": "cd /tmp/cc-tests-work/sonnet/vague-prompt-r1/more_itertools; for r in 1920,1937 3420,3432 4076,4082 4108,4122 5012,5019; do sed -n \"${r}p\" more.py; echo ----; done"
+          }
+        }
+      ],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 7,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "Error-handling improvements for this project (`more-itertools`), based on a scan of `more_itertools/more.py` and `recipes.py`. I haven't changed any files.\n\n- **Bare raises with no message.** `raise IndexError` and `raise ValueError` give users nothing to act on. Examples are `more.py:4080`, `4111`, `4120`, `4154`, `4162` and `5018` (`nth_prime`, `nth_permutation`, `nth_product` and similar). Add messages such as `'index out of range'`, `'r must be between 0 and len(iterable)'` or `'n must be >= 0'`.\n- **Inconsistent validation messages.** The same check is worded differently across functions (\"n must be at least 1\", \"n must be > 0\", \"n must be greater than 0\"). A small shared helper, or consistent wording, would make errors predictable and easier to test.\n- **`raise StopIteration` inside helper code** (`more.py:1936`, `3427`, `3431`). This is fragile under PEP 479 if it ever runs inside a generator, because it becomes a `RuntimeError`. Check that each call site only runs where `StopIteration` is caught, or restructure it.\n- **Broad `except TypeError` fallbacks.** About 12 sites, for example `more.py:804`, `1212`, `1977`, `2043`, `4052` and `4210`. These can mask unrelated `TypeError`s raised inside user callbacks or iterables. Narrow the `try` block to the single call that can fail (usually `len()` or indexing), and use `raise ... from` where an error is re-raised as another type.\n- **Validation that runs too late in generators.** Many generator functions only validate arguments on the first `next()`, so a bad argument surfaces far from the call site. Wrap them so argument checks run eagerly, then return the inner generator.\n- **Type-check error text.** Some `TypeError` and `ValueError` messages don't include the offending value or type (for example `more.py:2197`, `2201`, `2263`, `2558`). Including it, such as `f'got {type(x).__name__}'`, speeds up debugging.\n- **`assert` used for invariants** (`more.py:4114`). Asserts vanish under `python -O`. That's fine for a true internal invariant, but anything reachable from user input should be an explicit raise.\n- **Tests.** Add tests that assert the exception type and message (`assertRaisesRegex`) for the improved errors, plus boundary cases such as `n=0`, negative values and empty iterables.\n\nIf you'd like me to implement any of these, tell me which ones.",
+      "ttft_ms": 2164,
+      "type": "result",
+      "duration_ms": 16501,
+      "uuid": "3eb5445d-0cef-4fd0-a5cf-5efb9e366180",
+      "ttft_stream_ms": 1885,
+      "time_to_request_ms": 961,
+      "first_content_frame_ms": 1886,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 19.2
+    }
+  }
+]

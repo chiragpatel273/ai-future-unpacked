@@ -1,0 +1,123 @@
+[
+  {
+    "prompt": "One quick question: what does more_itertools.chunked do with the leftover items when they don't fill a whole chunk?",
+    "row": [
+      "sonnet",
+      "quick-question",
+      1,
+      1,
+      1,
+      2,
+      16785,
+      13019,
+      299,
+      29806,
+      29806,
+      12.1,
+      0.0714,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 3197,
+      "stop_reason": "end_turn",
+      "session_id": "c16163a9-919a-415a-b3e6-fab0eeaf1622",
+      "total_cost_usd": 0.07143590000000001,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 16785,
+        "cache_read_input_tokens": 13019,
+        "output_tokens": 299,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 16785,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 299,
+            "cache_read_input_tokens": 13019,
+            "cache_creation_input_tokens": 16785,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 16785
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 299,
+          "cacheReadInputTokens": 13019,
+          "cacheCreationInputTokens": 16785,
+          "webSearchRequests": 0,
+          "costUSD": 0.07143590000000001,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 16785,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "`more_itertools.chunked` keeps the leftover items and returns them as a final, shorter chunk. It doesn't pad or drop them.\n\n```python\nfrom more_itertools import chunked\nlist(chunked([1, 2, 3, 4, 5, 6, 7], 3))\n# [[1, 2, 3], [4, 5, 6], [7]]\n```\n\nRelated options:\n- **`strict=True`** (added in more-itertools 8.9) raises `ValueError` if the iterable can't be split into equal chunks. It only takes effect when you also pass `n`.\n- **`grouper`** is the one to use if you want the last chunk padded with a fill value. It takes `fillvalue`, and its `incomplete` argument can also be set to `'ignore'` to drop the leftovers or `'strict'` to raise.\n- **`chunked_even`** spreads the items so the chunk sizes are as even as possible.",
+      "ttft_ms": 3944,
+      "type": "result",
+      "duration_ms": 4017,
+      "uuid": "f3f51f6a-f8cc-4aa6-a710-8336a8849ec0",
+      "ttft_stream_ms": 1697,
+      "time_to_request_ms": 838,
+      "first_content_frame_ms": 1697,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 12.1
+    }
+  }
+]

@@ -1,0 +1,140 @@
+[
+  {
+    "prompt": "Improve the error handling in this project. Do not change any files; reply with a short list.",
+    "row": [
+      "opus",
+      "vague-prompt",
+      1,
+      1,
+      9,
+      18,
+      28656,
+      299058,
+      2900,
+      327732,
+      41677,
+      39.6,
+      0.3471,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 34634,
+      "stop_reason": "end_turn",
+      "session_id": "c4803360-ca29-4bf2-ba36-94368fbea469",
+      "total_cost_usd": 0.3471316,
+      "usage": {
+        "input_tokens": 18,
+        "cache_creation_input_tokens": 28656,
+        "cache_read_input_tokens": 299058,
+        "output_tokens": 2900,
+        "output_tokens_details": {
+          "thinking_tokens": 729
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 28656,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 868,
+            "cache_read_input_tokens": 41194,
+            "cache_creation_input_tokens": 481,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 481
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-opus-5-5": {
+          "inputTokens": 18,
+          "outputTokens": 2900,
+          "cacheReadInputTokens": 299058,
+          "cacheCreationInputTokens": 28656,
+          "webSearchRequests": 0,
+          "costUSD": 0.3471316,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 729,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 28656,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_01VB6n9cZLRQhSdMVLN7NsRF",
+          "tool_input": {
+            "command": "find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' | head -100 && wc -l $(find . -type f -not -path '*/node_modules/*' | head -50) 2>/dev/null | tail -1",
+            "description": "List project files and total size"
+          }
+        },
+        {
+          "tool_name": "Bash",
+          "tool_use_id": "toolu_01AaJVf3zg89jqNxG21HgqbZ",
+          "tool_input": {
+            "command": "cd /tmp/cc-tests-work/opus/vague-prompt-r1/more_itertools && for r in 265:282 600:614 1205:1220 1918:1940 2790:2800 3420:3432 4072:4082 4105:4122 4150:4164 4655:4668 5010:5020; do echo \"== more.py $r\"; sed -n \"${r/:/,}p\" more.py; done; for r in 360:390 705:727 1190:1205; do echo \"== recipes.py $r\"; sed -n \"${r/:/,}p\" recipes.py; done",
+            "description": "Show code around notable raise sites"
+          }
+        }
+      ],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 9,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "I haven't changed any files. Here are the error-handling improvements I'd make in `more_itertools`, most important first:\n\n1. **`value_chain` hides real errors.** It wraps `yield from value` in `except TypeError` (`more.py:4209-4212`). If an iterable raises `TypeError` partway through, the error is silently dropped and the whole object is yielded after its partial items. It should only check `iter(value)` inside the `try`, the way `collapse` does at `more.py:1298-1302`.\n2. **`last()` catches too much.** `except (IndexError, TypeError, StopIteration)` (`more.py:273`) also catches errors from a user's own `__getitem__` or `__reversed__` and reports them as \"empty iterable\". It should catch only what an empty input produces, and add `from exc`.\n3. **Errors with no message.** `raise ValueError` / `raise IndexError` / `raise TypeError` appear with no text in `product_index`/`nth_permutation`/`nth_combination_with_replacement` (`more.py:4080, 4111, 4120, 4154, 4162`), `nth_prime` (`more.py:5018`), `SequenceView.__init__` (`more.py:2797`) and `nth_combination` (`recipes.py:714, 725`). Each should say which argument was wrong and what values are allowed, like the rest of the module does.\n4. **Original exception lost when re-raising.** `last()` (`more.py:275`) and `interleave_evenly` (`more.py:1213`) raise a new `ValueError` inside an `except` block without `from exc`, so the traceback reads as a second failure. `minmax` (`more.py:4663`) already does this correctly.\n5. **`assert` used for checks in `recipes.py:1197, 1202`.** These are internal helpers, but asserts disappear under `python -O`. Use explicit checks or comments if they're meant as guarantees.\n6. **Messages are inconsistent.** Similar checks use different wording (\"n must be at least 1\", \"n must be > 0\", \"n must be greater than 0\", \"n should be at least one, not {n}\"). One style that includes the bad value would make errors easier to read and test.\n7. **Missing tests.** Add `assertRaises` tests (with message checks) for the cases above, especially the `value_chain` and `last()` behavior.",
+      "ttft_ms": 3911,
+      "type": "result",
+      "duration_ms": 36863,
+      "uuid": "de288258-4577-488d-bad8-9703e52bcebc",
+      "ttft_stream_ms": 2479,
+      "time_to_request_ms": 943,
+      "first_content_frame_ms": 2480,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 39.6
+    }
+  }
+]

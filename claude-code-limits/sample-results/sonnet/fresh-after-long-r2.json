@@ -1,0 +1,123 @@
+[
+  {
+    "prompt": "One quick question: what does more_itertools.chunked do with the leftover items when they don't fill a whole chunk?",
+    "row": [
+      "sonnet",
+      "fresh-after-long",
+      2,
+      1,
+      1,
+      2,
+      12286,
+      14883,
+      293,
+      27171,
+      27171,
+      7.0,
+      0.0536,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 2882,
+      "stop_reason": "end_turn",
+      "session_id": "01d5d487-a6d6-4044-9044-a5c6ab168910",
+      "total_cost_usd": 0.0535663,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 12286,
+        "cache_read_input_tokens": 14883,
+        "output_tokens": 293,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 12286,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 293,
+            "cache_read_input_tokens": 14883,
+            "cache_creation_input_tokens": 12286,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 12286
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 293,
+          "cacheReadInputTokens": 14883,
+          "cacheCreationInputTokens": 12286,
+          "webSearchRequests": 0,
+          "costUSD": 0.0535663,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 12286,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "`more_itertools.chunked` keeps the leftover items. The last chunk is just shorter than the others.\n\n```python\n>>> list(chunked([1, 2, 3, 4, 5, 6, 7], 3))\n[[1, 2, 3], [4, 5, 6], [7]]\n```\n\nBy default it doesn't pad or drop anything. Each chunk is a list.\n\nTwo related options:\n- **`strict=True`** raises `ValueError` if the final chunk would be shorter than `n`. This needs `n` to be given.\n- **`ichunked`** does the same thing lazily, yielding iterators instead of lists.\n\nIf you want padding or dropping instead, use `itertools.zip_longest` with a fill value to pad. Or use `more_itertools.grouper`, which pads with a `fillvalue`. To drop the remainder, use `grouper(..., incomplete='ignore')`.",
+      "ttft_ms": 3759,
+      "type": "result",
+      "duration_ms": 3804,
+      "uuid": "1c1e4b23-0598-4b10-86c0-c876c4300ff4",
+      "ttft_stream_ms": 1939,
+      "time_to_request_ms": 927,
+      "first_content_frame_ms": 1939,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 7.0
+    }
+  }
+]

@@ -1,0 +1,123 @@
+[
+  {
+    "prompt": "Run the test suite with: python3 -m unittest -v . Tell me how many tests ran and whether any failed, in two sentences. Do not change any files.",
+    "row": [
+      "opus",
+      "tests-raw",
+      1,
+      1,
+      2,
+      4,
+      19452,
+      40271,
+      357,
+      59727,
+      32473,
+      27.4,
+      0.1708,
+      false
+    ],
+    "result": {
+      "duration_api_ms": 5805,
+      "stop_reason": "end_turn",
+      "session_id": "9de95563-d290-4fc5-b3c8-4b6ce1167e30",
+      "total_cost_usd": 0.1708262,
+      "usage": {
+        "input_tokens": 4,
+        "cache_creation_input_tokens": 19452,
+        "cache_read_input_tokens": 40271,
+        "output_tokens": 357,
+        "output_tokens_details": {
+          "thinking_tokens": 152
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 19452,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 234,
+            "cache_read_input_tokens": 27252,
+            "cache_creation_input_tokens": 5219,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 5219
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-opus-5-5": {
+          "inputTokens": 4,
+          "outputTokens": 357,
+          "cacheReadInputTokens": 40271,
+          "cacheCreationInputTokens": 19452,
+          "webSearchRequests": 0,
+          "costUSD": 0.1708262,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 152,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 19452,
+          "canonicalModel": "claude-opus-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 2,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "828 tests ran in about 17.6 seconds and none failed; the result was `OK`, with 6 skipped. Most of the output I saw was doctests from `more_itertools`, so the total includes those along with any project tests, and I didn't change any files.",
+      "ttft_ms": 3028,
+      "type": "result",
+      "duration_ms": 25102,
+      "uuid": "b9bedfe6-b590-4374-a9a1-87f7d8569f7c",
+      "ttft_stream_ms": 2109,
+      "time_to_request_ms": 794,
+      "first_content_frame_ms": 2110,
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "_seconds": 27.4
+    }
+  }
+]
